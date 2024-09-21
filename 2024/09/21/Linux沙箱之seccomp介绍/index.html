@@ -9,7 +9,7 @@
     
     <title>
         
-            Hello World |
+            Linux沙箱之seccomp介绍 |
         
         arch3rn4r
     </title>
@@ -231,7 +231,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        Hello World
+                        Linux沙箱之seccomp介绍
                     </div>
                 
 
@@ -257,12 +257,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2024-03-29 22:35:07</span>
+                <span class="datetime">2024-09-21 20:02:15</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Fri Mar 29 2024 22:35:07 GMT+0800">2024-03-29 22:35:07</span>
+                <span class="datetime" data-updated="Sat Sep 21 2024 20:04:14 GMT+0800">2024-09-21 20:04:14</span>
             </span>
         
 
@@ -273,7 +273,7 @@
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>75 字</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>1.8k 字</span>
             </span>
         
         
@@ -292,19 +292,79 @@
                     
 
                     
-                         <p>Welcome to <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/" >Hexo<i class="fas fa-external-link-alt"></i></a>! This is your very first post. Check <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/" >documentation<i class="fas fa-external-link-alt"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html" >troubleshooting<i class="fas fa-external-link-alt"></i></a> or you can ask me on <a class="link"   target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues" >GitHub<i class="fas fa-external-link-alt"></i></a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+                         <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><strong>seccomp</strong> (Secure Computing Mode) 是 Linux 内核的一种安全机制，用于限制进程可以调用的系统调用集。本质上是linux系统调用的防火墙，可查看文档<a class="link"   target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html" >http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>seccomp很强大，它可以遗传给子进程，甚至能限制root用户运行的进程，而且可以自己编写复杂的规则来达到目的，能够管理系统调用，禁止某些系统调用，允许某些系统调用，甚至是基于它们的参数来过滤系统调用。</p>
+<p><strong>seccomp原理</strong></p>
+<p><code>seccomp</code> 的核心工作原理是基于 <strong>eBPF</strong>（扩展的 Berkeley Packet Filter），一种内核中的 “虚拟机” 机制，来定义和执行系统调用的过滤规则。**<a class="link"   target="_blank" rel="noopener" href="https://github.com/iovisor/bcc" >BCC (BPF Compiler Collection)<i class="fas fa-external-link-alt"></i></a>** 就是一个基于 eBPF 的工具集，可以对系统进行深度的追踪分析，帮助开发者理解和优化系统行为。</p>
+<p>BPF 最初是一个简单的虚拟机，允许用户在内核中安装过滤器程序，这些程序可以定义哪些网络数据包被捕获、过滤或丢弃。而eBPF是利用库，比如seccomp等建立起过滤器，是 BPF 的扩展，最初用于扩展网络过滤功能，但现在它被广泛用于监控、追踪、和执行更多类型的内核任务，不仅限于网络过滤。eBPF 是一个通用的、可编程的内核沙箱系统，可以在不修改内核源码的情况下，通过动态加载字节码，增强内核功能。</p>
+<p><strong>工具</strong></p>
+<p>用于提取 seccomp 规则</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/david942j/seccomp-tools" >https://github.com/david942j/seccomp-tools<i class="fas fa-external-link-alt"></i></a></p>
+<h4 id="演示环节"><a href="#演示环节" class="headerlink" title="演示环节"></a><strong>演示环节</strong></h4><p>创建沙盒的主要代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scmp_filter_ctx ctx;   <span class="comment">//声明上下文，将创建seccomp过滤容器</span></span><br><span class="line">ctx = <span class="built_in">seccomp_init</span>(SCMP_ACT_ALLON);  <span class="comment">//初始化容器</span></span><br><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(execve), <span class="number">0</span>);<span class="comment">//添加规则</span></span><br><span class="line"><span class="built_in">seccomp_load</span>(ctx);<span class="comment">//调用这个沙盒</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html" >Writing<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>为了调用，在编译执行文件时需要加一个参数 <code>-lseccomp</code> 像这样 <code>gcc -o a a.c -lseccomp</code>，将它链接在seccomp库</p>
+<p>下载seccomp <code>sudo apt libseccomp-dev</code></p>
+<p>一个简单的seccomp代码，它的作用是当进程调用 <code>execve</code> 系统调用时，内核将会立即<strong>终止该进程,</strong><code>execl(&quot;/bin/cat&quot;, &quot;cat&quot;, &quot;/flag&quot;, (char *)0);</code>就是有关execve的调用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _GNU_SOURCE 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;seccomp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">scmp_filter_ctx ctx;</span><br><span class="line">ctx = <span class="built_in">seccomp_init</span>(SCMP_ACT_ALLOW);</span><br><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(execve), <span class="number">0</span>);</span><br><span class="line"><span class="built_in">seccomp_load</span>(ctx);</span><br><span class="line"></span><br><span class="line"><span class="built_in">execl</span>(<span class="string">&quot;/bin/cat&quot;</span>, <span class="string">&quot;cat&quot;</span>, <span class="string">&quot;/catflag&quot;</span>, (<span class="type">char</span> *)<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/server.html" >Server<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>正常输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">└─$ ./seccomp</span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="built_in">echo</span> yougettheflag!</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html" >Generating<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>加了沙盒代码后的输出,Bad system call</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">└─$ ./seccomp                                                                  </span><br><span class="line">错误的系统调用</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html" >Deployment<i class="fas fa-external-link-alt"></i></a></p>
+<p>具体可以starce .&#x2F;seccomp查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">└─$ strace ./seccomp   </span><br><span class="line">...</span><br><span class="line">prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)  = 0</span><br><span class="line">seccomp(SECCOMP_SET_MODE_FILTER, 0, &#123;len=8, filter=0x5654398a6f60&#125;) = 0</span><br><span class="line">execve(<span class="string">&quot;/bin/cat&quot;</span>, [<span class="string">&quot;cat&quot;</span>, <span class="string">&quot;catflag&quot;</span>], 0x7fff389874c8 /* 57 vars */) = 59</span><br><span class="line">+++ killed by SIGSYS +++</span><br><span class="line">错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<h4 id="演示子进程继承seccomp"><a href="#演示子进程继承seccomp" class="headerlink" title="演示子进程继承seccomp"></a><strong>演示</strong>子进程继承<strong>seccomp</strong></h4><p>更换代码，将exe改为read</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(execve), <span class="number">0</span>);</span><br><span class="line">修改为</span><br><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(read), <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>追踪strace cat catflag,可以发现cat调用了read，从文件中读入了flag,cat是seccomp.c的子程序，所以在这里使用cat来演示继承</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fc515eae000</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;#!/bin/sh\necho yougettheflag!\n\n&quot;</span>, 131072) = 31</span><br><span class="line">write(1, <span class="string">&quot;#!/bin/sh\necho yougettheflag!\n\n&quot;</span>, 31<span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="built_in">echo</span> yougettheflag!</span><br><span class="line"></span><br><span class="line">) = 31</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;&quot;</span>, 131072)  </span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">└─$ ./seccomp                                                                                  </span><br><span class="line">错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<p>strace .&#x2F;seccomp 可以发现read进程被kill了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">openat</span>(AT_FDCWD, <span class="string">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY|O_CLOEXEC) = <span class="number">3</span>newfstatat(<span class="number">3</span>, <span class="string">&quot;&quot;</span>, &#123;st_mode=S_IFREG|<span class="number">0644</span>, st_size=<span class="number">123035</span>, ...&#125;, AT_EMPTY_PATH) = <span class="number">0</span>mmap(<span class="literal">NULL</span>, <span class="number">123035</span>, PROT_READ, MAP_PRIVATE, <span class="number">3</span>, <span class="number">0</span>) = <span class="number">0x7fc5b7dc7000c</span>lose(<span class="number">3</span>)                                = <span class="number">0</span>openat(AT_FDCWD, <span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>, O_RDONLY|O_CLOEXEC) = <span class="number">3</span>read(<span class="number">3</span>, <span class="string">&quot;&quot;</span>, <span class="number">832</span>)                        = <span class="number">0</span>+++ killed by SIGSYS +++错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<h3 id="逃逸"><a href="#逃逸" class="headerlink" title="逃逸"></a>逃逸</h3><h4 id="宽松政策"><a href="#宽松政策" class="headerlink" title="宽松政策"></a><strong>宽松政策</strong></h4><p>很多程序使用seccomp，比如docker,firefox等，它们使用seccomp来进行保护。同时，这类应用需要和用户进行交互，需要使用互联网，需要高性能，这通常意味着直接调用内核来实现功能，使用系统调用而不是通过它们的父进程。</p>
+<p>系统调用一直在更新，也就意味着沙盒很难一直跟进系统新功能。有些docker漏洞就是因为不正确的seccomp配置导致的。</p>
+<p>其中一个例子是在沙盒中允许使用ptrace,ptrace是linux的调试功能，允许它作为调试器附加到另一个进程，监视它的执行，改变内存，改变寄存器，可以获得完全控制权。最终能通过另一个进程逃离沙盒。可看这篇文章 （KCTF2024 - 第八题星门 题解 与 ptrace绕过seccomp讨论<a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-283186.htm%EF%BC%89" >https://bbs.kanxue.com/thread-283186.htm）<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>其他系统调用</strong></p>
+<ul>
+<li>sendmsg()</li>
+</ul>
+<p>不仅可以发送从文件中读取的数据，还可以发送打开文件描述符本身。当在shellcode中执行open，他返回flag的文件描述符，比如数字3.当这个数字被发送到另一个进程，它只是数字3，但是使用sendmsg可以发送包装好的元数据，表明这是一个文件，然后内核看到这个元数据，并将这个打开得内核跟踪的文件传输到你要发信息的进程中。</p>
+<ul>
+<li>prctl()</li>
+</ul>
+<p>抓包</p>
+<ul>
+<li>process_vm_writev()</li>
+</ul>
+<p>该系统调用可以将内存直接写入另一个程序</p>
+<h4 id="混淆"><a href="#混淆" class="headerlink" title="混淆"></a>混淆</h4><p>源于：AMD,AMD64向后兼容x86 ,linux支持32位和64位代码在同一个进程中交替进行（沙箱名字：native client <a class="link"   target="_blank" rel="noopener" href="https://developer.chrome.com/docs/native-client?hl=zh-cn" >https://developer.chrome.com/docs/native-client?hl=zh-cn<i class="fas fa-external-link-alt"></i></a>)</p>
+<p><strong>架构混淆</strong></p>
+<p>linux对于x86和amd64有不同的系统调用定义，在arm64上使用系统调用指令有两种不同的方式来触发它们，</p>
+<p>比如exit()在amd64中系统调用参数是60，在x86和x86_32中是1</p>
+<p>有两种类型的系统调用： <code>syscall</code> 用于 64 位和 <code>int 0x80</code> 用于 32 位。这些架构具有不同的系统调用编号，分别取决于 <code>rax</code> 和 <code>eax</code> 。默认情况下，seccomp 将终止所有 32 位系统调用。</p>
+<p>也就是说如果在之前的seccomp.c代码里加上32位标准的read调用，就有可能绕过沙箱。在默认配置（前面出现的配置)中，这样的错误不会发现，但是在一些非默认配置中就可能出现这样的混淆错误，从而能被利用</p>
+<h4 id="侧信道"><a href="#侧信道" class="headerlink" title="侧信道"></a>侧信道</h4><p>如果只是想读取信息而不是拿到shell。</p>
+<p>sleep() 根据进程运行时间来传递数据，类似于sql盲注</p>
+<p>一个bit一个bit的传输</p>
+<p>崩溃与无崩溃：在某些情况下，很明显程序崩溃，因为应用程序明确地通过错误消息告诉您，或者只是缺少一些预期的输出。这可以通过崩溃或继续执行来告诉你 1 位信息，利用这一点的方法类似于使用程序的运行时。</p>
+<h4 id="内核漏洞"><a href="#内核漏洞" class="headerlink" title="内核漏洞"></a>内核漏洞</h4><p><a class="link"   target="_blank" rel="noopener" href="https://github.com/allpaca/chrome-sbx-db" >https://github.com/allpaca/chrome-sbx-db<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="参考资料和推荐资源"><a href="#参考资料和推荐资源" class="headerlink" title="参考资料和推荐资源"></a>参考资料和推荐资源</h3><p><a class="link"   target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html" >http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/" >https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-283186.htm" >https://bbs.kanxue.com/thread-283186.htm<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/allpaca/chrome-sbx-db" >https://github.com/allpaca/chrome-sbx-db<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://book.jorianwoltjer.com/binary-exploitation/sandboxes-chroot-seccomp-and-namespaces" >https://book.jorianwoltjer.com/binary-exploitation/sandboxes-chroot-seccomp-and-namespaces<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>eBPF****相关扩展</strong></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/iovisor/bcc" >https://github.com/iovisor/bcc<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://xz.aliyun.com/t/11480?time__1311=Cq0xRDnD0D2A0QD/Wr90Djxmw4VKYzea4D" >https://xz.aliyun.com/t/11480?time__1311=Cq0xRDnD0D2A0QD%2FWr90Djxmw4VKYzea4D<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://ebpf.io/what-is-ebpf/" >https://ebpf.io/what-is-ebpf/<i class="fas fa-external-link-alt"></i></a></p>
 
                     
                 </div>
@@ -325,22 +385,22 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2024/09/16/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/"
-                                   title="格式化字符串漏洞"
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/09/21/shell%E7%9A%84%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4%E6%9C%BA%E5%88%B6/"
+                                   title="shell的历史命令机制"
                                 >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">格式化字符串漏洞</span>
-                                        <span class="post-nav-item">上一篇</span>
+                                        <span class="post-nav-title-item text-ellipsis">shell的历史命令机制</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
                                     </span>
                                 </a>
                             </div>
-                        
                         
                     </div>
                 
@@ -462,7 +522,7 @@
             <div class="pc-post-toc left-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E7%8E%AF%E8%8A%82"><span class="nav-text">演示环节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E7%BB%A7%E6%89%BFseccomp"><span class="nav-text">演示子进程继承seccomp</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8"><span class="nav-text">逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%BD%E6%9D%BE%E6%94%BF%E7%AD%96"><span class="nav-text">宽松政策</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E6%B7%86"><span class="nav-text">混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%A7%E4%BF%A1%E9%81%93"><span class="nav-text">侧信道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E"><span class="nav-text">内核漏洞</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E5%92%8C%E6%8E%A8%E8%8D%90%E8%B5%84%E6%BA%90"><span class="nav-text">参考资料和推荐资源</span></a></li></ol>
     </div>
 </div>
 
@@ -649,7 +709,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E7%8E%AF%E8%8A%82"><span class="nav-text">演示环节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E7%BB%A7%E6%89%BFseccomp"><span class="nav-text">演示子进程继承seccomp</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8"><span class="nav-text">逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%BD%E6%9D%BE%E6%94%BF%E7%AD%96"><span class="nav-text">宽松政策</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E6%B7%86"><span class="nav-text">混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%A7%E4%BF%A1%E9%81%93"><span class="nav-text">侧信道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E"><span class="nav-text">内核漏洞</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E5%92%8C%E6%8E%A8%E8%8D%90%E8%B5%84%E6%BA%90"><span class="nav-text">参考资料和推荐资源</span></a></li></ol>
     </div>
 </div>
 
