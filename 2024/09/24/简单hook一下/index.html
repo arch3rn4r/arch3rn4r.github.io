@@ -9,7 +9,7 @@
     
     <title>
         
-            Hello World |
+            简单hook一下 |
         
         arch3rn4r
     </title>
@@ -231,7 +231,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        Hello World
+                        简单hook一下
                     </div>
                 
 
@@ -257,12 +257,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2024-03-29 22:35:07</span>
+                <span class="datetime">2024-09-24 18:58:49</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Fri Mar 29 2024 22:35:07 GMT+0800">2024-03-29 22:35:07</span>
+                <span class="datetime" data-updated="Tue Sep 24 2024 19:07:01 GMT+0800">2024-09-24 19:07:01</span>
             </span>
         
 
@@ -273,7 +273,7 @@
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>75 字</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>674 字</span>
             </span>
         
         
@@ -292,19 +292,98 @@
                     
 
                     
-                         <p>Welcome to <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/" >Hexo<i class="fas fa-external-link-alt"></i></a>! This is your very first post. Check <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/" >documentation<i class="fas fa-external-link-alt"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html" >troubleshooting<i class="fas fa-external-link-alt"></i></a> or you can ask me on <a class="link"   target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues" >GitHub<i class="fas fa-external-link-alt"></i></a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+                         <p>使用的例题是**[CISCN 2022 东北]crackme_Android，**虽然这题的关键点在MD5爆破，但是它的主逻辑函数包括了“成功”和“失败”的判断，可以验证是否成功hook函数</p>
+<blockquote>
+<p>我的环境</p>
+<p>frida 16.4.2</p>
+<p>雷电模拟器(adb也是使用的雷电模拟器自带的）</p>
+<p>jadx</p>
+<p>IDEA</p>
+</blockquote>
+<h2 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h2><p>初步分析，拖入模拟器后运行，随便输一个数，得到报错信息</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmU0NGQ2ZGQ1MzE0OTFkOWNlZDZhMDBjYWExM2I4ZGJfd0Y4ajNWSkRzdXc5SE02Z21FalpkeDFiaENOZElFZG5fVG9rZW46SU5mM2I0czAxb2JxSXh4ZGJzYmNEaE5KblJiXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>在jadx里使用文本搜索找到相应报错信息并得到判断条件</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=N2QwMmNmYzljMzNiYWY0N2ExZDYwMzBmOTQ5NzZiODVfenIzVEdaS1dCcmRFV3ZscUliSE1ZTnRwTW5sWkF1bU5fVG9rZW46SGdGcGJTQ0JMb09lM3V4UFlnd2MxYUgybmNkXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>点击if判断里的“check”找到check函数</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=N2I1ZGRkNjZkYTI0ZTczODI1MWYxZWVhNGNhOGE5ZmFfYWlycjdkdlpETjJYWUw3Mno0Yk9WU3dyV3lIbXU5dEtfVG9rZW46S1hEZWJtRXFGbzUyM1N4QlIzM2N5MHpQbmVRXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>通过分析可知格式是flag{}，然后还有个MD5,爆破，以下是爆破脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 待破解MD5值</span></span><br><span class="line">target_md5s =[]</span><br><span class="line">flag=<span class="string">&quot;&quot;</span><span class="built_in">str</span>=<span class="string">&#x27;8393931a16db5a00f464a24abe24b17a9040b57d9cb2cbfa6bdc61d12e9b51f2789e8a8ae9406c969118e75e9bc65c4327fbc7c3accdf2c54675b0ddf3e0a6099b1b81046d525495e3a14ff6eae76eddfa1740cd6bd483da0f7684b2e4ec84b371f07bf95f0113eefab12552181dd832af8d1eb220186400c494db7091e402b0&#x27;</span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    target_md5s.append(<span class="built_in">str</span>[<span class="number">32</span>*i:<span class="number">32</span>*(i+<span class="number">1</span>)])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成所有可能的4位信息的列表</span></span><br><span class="line">passwords = []</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> <span class="string">&#x27;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_&#x27;</span>:</span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> <span class="string">&#x27;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_&#x27;</span>:</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> <span class="string">&#x27;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_&#x27;</span>:</span><br><span class="line">            <span class="keyword">for</span> d <span class="keyword">in</span> <span class="string">&#x27;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_&#x27;</span>:</span><br><span class="line">                passwords.append(a+b+c+d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐个比较MD5值for md5 in target_md5s:</span></span><br><span class="line">    <span class="keyword">for</span> password <span class="keyword">in</span> passwords:</span><br><span class="line">        <span class="keyword">if</span> hashlib.md5(password.encode(<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest() == md5:</span><br><span class="line">            flag+=password</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Password found: &quot;</span> + password)</span><br><span class="line">            breakprint(<span class="string">&quot;flag&#123;&quot;</span>+flag+<span class="string">&quot;&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html" >Writing<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>好了题目解出来了，现在继续看hook函数</p>
+<h2 id="hook"><a href="#hook" class="headerlink" title="hook"></a>hook</h2><p>先找到包名 com.example.crackme1，这一步可以使用MT管理器，但是现在不需要一步一步构建</p>
+<p>找到所需hook的函数”check”,在jadx里直接右键复制代码就行，接下来演示是使用frida就复制frida的</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=MGRiNWY4MzVhMDIyNzE4ZmRmZjllYjMzOTdjYTdhNzZfSWplNGRMQTIyQmJzYlhvMjIxTjBMNTRRZWxUdDl6dEhfVG9rZW46RjRkT2JkU2ZUb05yMkN4WHFvS2NGMTNGbk1oXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><p>连接上模拟器，我用的是雷电模拟器，它的启动命令如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\adb start-server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/server.html" >Server<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTQ3MTUyM2EwNTVjZTNjM2VmNzBmZTVhOGJhOGEwODJfNWhvZWkxUVlMeWVLY1ZYbFhwU2kxakhJbWtqQ1ljRnJfVG9rZW46SEVzOWIwSWlxb2RGYzN4QllVZ2NEdHJZbmg5XzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>然后连接frida服务（之前我把frida-server装在了data&#x2F;local&#x2F;tmp文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.\adb shell</span><br><span class="line">su</span><br><span class="line">cd data/local/tmp</span><br><span class="line">./frida-server</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html" >Generating<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>然后再开一个窗口进行端口转发</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.\adb forward tcp:<span class="number">27042</span> tcp:<span class="number">27042</span></span><br><span class="line"><span class="number">27042</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a class="link"   target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html" >Deployment<i class="fas fa-external-link-alt"></i></a></p>
+<p>之后可以检查一下有没有连上,有信息出来了就是连上了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">frida-ls-devices</span><br><span class="line">frida-ps -U</span><br></pre></td></tr></table></figure>
+
+<h3 id="开始hook"><a href="#开始hook" class="headerlink" title="开始hook"></a>开始hook</h3><p><code>frida-ps -U</code> 找到进程名（这一步前需要你先在模拟器打开crackme1软件才行，不然就不会出现进程名）</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=Y2VmZTgzMzlhNTY0ZTg1Y2UyYTgxMTY0MjE5NDQ2ZDhfZHB0ZUdic1RNRzlscHpQNHo2V1dsQ21tT1JzSUNsRzZfVG9rZW46VzFCcmJuNzRzb0lWQ1l4SnVpWGMxa21wbjZjXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>然后连接</p>
+<p><code>frida -U &quot;进程名“ -l 脚本文件</code></p>
+<p><code>frida -U CrackMe1 -l hook.js</code> 我的脚本文件就是hook.js</p>
+<p>连上了</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=Yzc2YjQ1MmNiZTZiOTE3MjRhNDgxYzNlNGUyZmI5YWRfNlZhUDZzQ0s1VWlNYWtXOUlpWEozanptbUJQODNHRlRfVG9rZW46VkJGQmJSYjhmb3NUMnN4eG43UmN5VU91bnhiXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>这是hook.js文件，按照这个模板写就好了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function set_return() &#123;</span><br><span class="line">    let MainActivity = Java.use(<span class="string">&quot;com.example.crackme1.MainActivity&quot;</span>);</span><br><span class="line">    MainActivity[<span class="string">&quot;check&quot;</span>].implementation = function (flag) &#123;</span><br><span class="line">        console.log(`MainActivity.check <span class="keyword">is</span> called: flag=$&#123;flag&#125;`);</span><br><span class="line">        let result = this[<span class="string">&quot;check&quot;</span>](flag);</span><br><span class="line">        console.log(`MainActivity.check result=$&#123;result&#125;`);</span><br><span class="line">        <span class="keyword">return</span> true;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function main() &#123;</span><br><span class="line">    Java.perform(function() &#123;</span><br><span class="line">        set_return();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setImmediate(main);</span><br></pre></td></tr></table></figure>
+
+<p>这里直接改为true，无论怎样都返回true</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=ODAxMjhlNTcwMTFhYjcwYzE1ODk5ZTg5MmQ0NzNmNjVfOW43S1B2akxsTGJybDBkTkdCR09EVXRzbGFwYm5WbTZfVG9rZW46UjM0S2I2SjRGb1h2OUF4YkR1WmNQaXdybkhoXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
+<p>然后随便输入一个字符，此时点击它的判断就是Right了，就代表hook成功<img  
+                       lazyload
+                       alt="image"
+                       data-src="https://kwwxk5o96u6.feishu.cn/space/api/box/stream/download/asynccode/?code=NDk5YTNmMTdlZjJjYzdlMTQwYTc2Y2ZkMzkxNzhiMjVfUFRYUExPb3pHMHFQQjFnaGx6YkxzRGJoUmNjUFVRTFdfVG9rZW46RkJlaGJ1MGcxbzNRTGp4MWRqb2NMWkJFbldzXzE3MjcxNzU1Njg6MTcyNzE3OTE2OF9WNA"
+                       
+                 ></p>
 
                     
                 </div>
@@ -325,22 +404,22 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2024/09/16/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/"
-                                   title="格式化字符串漏洞"
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/09/21/Linux%E6%B2%99%E7%AE%B1%E4%B9%8Bseccomp%E4%BB%8B%E7%BB%8D/"
+                                   title="Linux沙箱之seccomp介绍"
                                 >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">格式化字符串漏洞</span>
-                                        <span class="post-nav-item">上一篇</span>
+                                        <span class="post-nav-title-item text-ellipsis">Linux沙箱之seccomp介绍</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
                                     </span>
                                 </a>
                             </div>
-                        
                         
                     </div>
                 
@@ -462,7 +541,7 @@
             <div class="pc-post-toc left-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E6%AD%A5%E5%88%86%E6%9E%90"><span class="nav-text">初步分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hook"><span class="nav-text">hook</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E5%87%86%E5%A4%87"><span class="nav-text">前置准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8Bhook"><span class="nav-text">开始hook</span></a></li></ol></li></ol>
     </div>
 </div>
 
@@ -649,7 +728,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E6%AD%A5%E5%88%86%E6%9E%90"><span class="nav-text">初步分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hook"><span class="nav-text">hook</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E5%87%86%E5%A4%87"><span class="nav-text">前置准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8Bhook"><span class="nav-text">开始hook</span></a></li></ol></li></ol>
     </div>
 </div>
 
