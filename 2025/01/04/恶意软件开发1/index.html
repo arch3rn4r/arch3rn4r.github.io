@@ -9,8 +9,6 @@
     
     <title>
         
-            恶意软件开发1 |
-        
         arch3rn4r
     </title>
     
@@ -232,7 +230,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        恶意软件开发1
+                        
                     </div>
                 
 
@@ -263,7 +261,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sat Jan 04 2025 00:58:19 GMT+0800">2025-01-04 00:58:19</span>
+                <span class="datetime" data-updated="Sun Jan 12 2025 23:54:28 GMT+0800">2025-01-12 23:54:28</span>
             </span>
         
 
@@ -274,7 +272,7 @@
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>12.3k 字</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>17.1k 字</span>
             </span>
         
         
@@ -294,6 +292,19 @@
 
                     
                          <h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><p>目的是做一个恶意软件，实现基本恶意功能，当前版本专注于实现基本功能，只有基本界面和功能。那么一个恶意软件应当具有什么功能呢，下面主要研究的是怎么做，而不是防御和绕过检测。它将是一个纯粹的恶意软件。以下信息pc和安卓都有，只是将基于Android端开发。。。</p>
+<p>安卓平台的特殊性</p>
+<ul>
+<li><p><strong>基于 Linux 内核：</strong> Android 系统基于 Linux 内核，这意味着一些 Linux 系统上的 Rootkit 技术也可以应用于 Android。</p>
+</li>
+<li><p><strong>分层架构：</strong> Android 系统采用分层架构，包括内核层、硬件抽象层 (HAL)、原生层、系统层和应用层。这使得恶意软件可以攻击不同的层级。</p>
+</li>
+<li><p><strong>权限管理：</strong> Android 有严格的权限管理机制，应用程序必须请求权限才能访问受保护的资源。</p>
+</li>
+<li><p><strong>启动过程：</strong> Android 的启动过程包括 Bootloader、Kernel、Init 进程、Zygote 进程和 System Server 等关键步骤。</p>
+</li>
+<li><p><strong>安全机制：</strong> Android 有多种安全机制，例如，SELinux、安全启动、应用签名、代码扫描等。</p>
+</li>
+</ul>
 <h2 id="恶意功能"><a href="#恶意功能" class="headerlink" title="恶意功能"></a>恶意功能</h2><h3 id="破坏性"><a href="#破坏性" class="headerlink" title="破坏性"></a>破坏性</h3><ul>
 <li><p>数据损坏和篡改：</p>
 <ul>
@@ -360,7 +371,120 @@
 </ul>
 </li>
 </ul>
+<h3 id="代码操作"><a href="#代码操作" class="headerlink" title="代码操作"></a>代码操作</h3><ul>
+<li><p>进程注入<br>进程注入是指将恶意代码注入 <code>explorer.exe</code> 或 <code>svchost.exe</code> 等合法进程。这有助于通过在受信任的进程中执行来隐藏恶意软件的恶意意图。 可以使用 CreateRemoteThread、WriteProcessMemory 等 API 来实现代码注入。</p>
+</li>
+<li><p>进程空心<br>进程挖空是恶意软件在暂停合法进程、用恶意代码替换其代码并使用恶意代码恢复执行时使用的一种技术。这使得恶意软件看起来像是一个合法进程。可以使用 CreateProcess 和 NtUnmapViewOfSection 等 API 来实现进程空心</p>
+</li>
+</ul>
 <h3 id="后门"><a href="#后门" class="headerlink" title="后门"></a>后门</h3><p>后门可以分为本地后门和远程后门。本地后门可以利用系统漏洞，远程后门可以利用网络通信。<br>隐藏后门: 修改系统日志，隐藏监听端口，进行数据加密等等。<br>隐藏其存在并允许攻击者远程控制计算机的恶意软件。通常隐藏在操作系统底层，难以检测和清除。常用于维护对受感染系统的持久访问。<br>可以考虑使用Android的BroadcastReceiver，Service等组件来建立后门。</p>
+<h3 id="命令与控制c2"><a href="#命令与控制c2" class="headerlink" title="命令与控制c2"></a>命令与控制c2</h3><p>许多恶意软件使用一种称为 c2（命令和控制）的东西。这是许多恶意软件的关键组件，尤其是在 APT（高级持续性威胁）、僵尸网络和其他形式的远程访问恶意软件中。此 c2 充当中心点，攻击者可以在此控制受感染机器上的恶意软件并与之通信。此基础设施允许攻击者远程向恶意软件发出命令并协调恶意软件将采取的活动。</p>
+<p><strong>c2 通常做什么？</strong></p>
+<ul>
+<li><p>感染和回调</p>
+<ul>
+<li><p>一旦恶意软件感染了主机，它就会回调到 c2 以建立连接，并让攻击者知道系统已被入侵。这也称为<code>beaconing</code>。</p>
+</li>
+<li><p>通常，恶意软件会嵌入 IP 地址（恶意软件中也可能包含加密配置）、域或 URL，作为 c2 的联系点。在复杂的攻击中，恶意软件可能会使用 DGA（域生成算法）来创建随机域，从而使阻止或跟踪 c2 通信变得更加困难。</p>
+</li>
+</ul>
+</li>
+<li><p>持久性</p>
+<ul>
+<li>恶意软件将与 c2 保持持续连接，以发送数据、接收命令或发送定期“ping”以让 c2 知道它仍然活跃。它甚至可能是所有这些的混合。</li>
+</ul>
+</li>
+<li><p>命令执行</p>
+<ul>
+<li><p>c2 还用于远程向恶意软件发送命令。这些命令可能包括：</p>
+<ul>
+<li><p>额外的有效载荷下载。</p>
+</li>
+<li><p>从系统中窃取数据。</p>
+</li>
+<li><p>接收并执行系统上的命令。</p>
+</li>
+<li><p>从受感染的系统向其他目标发起攻击。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>数据泄露</p>
+<ul>
+<li><p>恶意软件 c2 服务器通常用于从受感染的系统中窃取数据。</p>
+<ul>
+<li><p>键盘记录器可能会使用 c2 来保存记录的键盘。</p>
+</li>
+<li><p>勒索软件可能会使用 c2 窃取数据，以便随后对被勒索的公司进行敲诈勒索。</p>
+</li>
+<li><p>窃取者使用 c2 窃取受损凭证和银行信息。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>更新</p>
+<ul>
+<li>有时（这种情况很少见）恶意软件可能会使用 c2 更新自身，增加新功能。在一些复杂的攻击中，恶意软件是模块化的，这允许攻击者根据攻击阶段从 c2 动态加载“插件”或模块到恶意软件中。</li>
+</ul>
+</li>
+<li><p>混淆&#x2F;逃避</p>
+<ul>
+<li>c2 通常会设置加密通信通道，以使窥探者更难确定 c2 通信正在做什么。</li>
+</ul>
+</li>
+<li><p>重定向和代理</p>
+<ul>
+<li><p>Fast flux 是某些恶意软件用来频繁更改关联域名 IP 地址的技术。它可以解析大量 IP 地址，这些 IP 地址可充当实际 c2 基础设施的临时代理。</p>
+</li>
+<li><p>c2 服务器可能使用反向代理（也称为跳转箱），这可能是一个充当原始服务器中继的受感染系统。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>可能的 C2 协议</strong></p>
+<ul>
+<li><p>HTTP（s）</p>
+<ul>
+<li>通常用于隐藏与正常网络流量相关的流量。恶意软件将向 c2 发送 GET&#x2F;POST 请求。</li>
+</ul>
+</li>
+<li><p>DNS 隧道</p>
+<ul>
+<li>一些恶意软件会在 DNS 查询中编码命令或数据。由于 DNS 流量通常不受密切监控，因此这种情况可能不会被注意到。</li>
+</ul>
+</li>
+<li><p>自定义协议</p>
+<ul>
+<li><p>一些更复杂的恶意软件家族会创建专有协议来隐藏其 c2 连接。</p>
+<ul>
+<li>值得注意的是，这很难实现，如果您不知道自己在做什么，就不应该尝试。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>P2P（点对点）</p>
+<ul>
+<li>僵尸网络使用 P2P 通信。每个受感染的系统都可以在需要时充当 C2，这使得摧毁 C2 基础设施变得更加困难。</li>
+</ul>
+</li>
+<li><p><strong>C2 架构：</strong> C2 可以使用多种架构，例如：集中式架构、分布式架构、点对点架构等。</p>
+</li>
+<li><p><strong>C2 隐藏：</strong> C2 通常会使用多种技术来隐藏其踪迹，例如，域名生成算法（DGA）、Fast flux、加密通信等。</p>
+</li>
+<li><p><strong>C2 检测：</strong> 安全人员会使用多种技术来检测 C2 通信，例如，网络流量分析、域名信誉分析、行为分析等。</p>
+</li>
+<li><p><strong>C2 反制：</strong> 安全人员会采取多种手段来反制 C2，例如，阻断 C2 通信、追踪 C2 服务器、清除受感染设备等。</p>
+</li>
+</ul>
+<p><strong>基本 c2 示例</strong></p>
+<p>正如您所读到的，c2 被设计为恶意软件的“通信中心”，用于接收命令并决定下一步要做什么。下面是一个用 Python 编写的 c2 的基本示例：</p>
+<p>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def c2_server():</span><br><span class="line">    # listen on all interfaces</span><br><span class="line">    host = &#x27;0.0.0.0&#x27;</span><br><span class="line">    port = 4444</span><br><span class="line">    </span><br><span class="line">    # setup the socket</span><br><span class="line">    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    server_socket.bind((host, port))</span><br><span class="line">    # limit total connections to 5</span><br><span class="line">    server_socket.listen(5) </span><br><span class="line"></span><br><span class="line">    print(f&quot;[+] Listening for incoming connections on &#123;host&#125;:&#123;port&#125;...&quot;)</span><br><span class="line"></span><br><span class="line">    client_socket, addr = server_socket.accept()</span><br><span class="line">    </span><br><span class="line">    # loop forever</span><br><span class="line">    while True:</span><br><span class="line">        command = input(&quot;Enter command to execute: &quot;)</span><br><span class="line">        # send the command </span><br><span class="line">        client_socket.send(command.encode())</span><br><span class="line">        if command.lower() == &#x27;exit&#x27;:</span><br><span class="line">            print(&quot;[-] Closing connection.&quot;)</span><br><span class="line">            client_socket.close()</span><br><span class="line">            break</span><br><span class="line">        </span><br><span class="line">        # return the results from the malware</span><br><span class="line">        result = client_socket.recv(1024).decode()</span><br><span class="line">        print(f&quot;Output:\n&#123;result&#125;&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    c2_server()</span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="隐藏自身"><a href="#隐藏自身" class="headerlink" title="隐藏自身"></a>隐藏自身</h3><p>不出现桌面图标，伪装成系统进程，将代码注入到合法进程</p>
 <h3 id="支付劫持"><a href="#支付劫持" class="headerlink" title="支付劫持"></a>支付劫持</h3><p>劫持用户的支付信息，进行盗刷</p>
 <h3 id="激活方式"><a href="#激活方式" class="headerlink" title="激活方式"></a>激活方式</h3><p>特定用户触发：特定时间，特定地区，特定时间<br>事件：充电，接入wifi<br>水平仪、加速度传感器，陀螺仪</p>
@@ -393,15 +517,6 @@
 <li><p><strong>应用漏洞：</strong> 某些应用程序可能存在安全漏洞，恶意软件可以利用这些漏洞来获取其他应用程序的权限。</p>
 </li>
 </ul>
-<p><strong>权限提升：</strong></p>
-<ul>
-<li><p><strong>Root权限：</strong> 恶意软件可以尝试获取设备的Root权限。一旦获取Root权限，它就可以绕过所有的权限检查，从而访问任何受保护的资源。</p>
-</li>
-<li><p><strong>系统权限：</strong> 一些特殊的系统应用程序可能拥有更高的权限，恶意软件可以尝试利用这些权限来获取其他应用程序的权限。</p>
-</li>
-<li><p>Android的Accessibility Service来进行权限提升。</p>
-</li>
-</ul>
 <p><strong>权限绕过：</strong></p>
 <ul>
 <li><p><strong>覆盖攻击（Overlay Attack）：</strong> 恶意软件可以创建一个假的权限请求界面，覆盖在真实的权限请求界面之上。当用户点击“允许”时，实际上是将权限授予了恶意软件。</p>
@@ -411,6 +526,17 @@
 <li><p><strong>权限滥用：</strong> 恶意软件可以利用用户已经授予的权限，来进行其他恶意操作。 例如，一个获取了网络权限的恶意程序，可以下载其他恶意软件，或者将用户的隐私数据上传到服务器。</p>
 </li>
 <li><p><strong>隐蔽授权：</strong> 利用用户在安装应用时的习惯，在用户不知情的情况下诱导用户点击，从而获得权限。</p>
+</li>
+<li><p><strong>辅助功能服务(Accessibility Service)</strong>:利用 Accessibility Service 来获取用户屏幕信息、模拟用户操作、进行权限提升。无障碍服务只能用于帮助残障用户使用 Android 设备和应用程序。它们在后台运行，并在触发 <code>[AccessibilityEvent](https://developer.android.com/reference/android/view/accessibility/AccessibilityEvent)</code> s 时接收系统的回调。此类事件表示用户界面中的某些状态转换，例如，焦点已更改、单击了按钮等。此类服务可以选择请求查询活动窗口内容的功能。开发无障碍服务需要扩展此类并实现其抽象方法。</p>
+</li>
+</ul>
+<p><strong>权限提升：</strong></p>
+<ul>
+<li><p><strong>Root权限：</strong> 恶意软件可以尝试获取设备的Root权限。一旦获取Root权限，它就可以绕过所有的权限检查，从而访问任何受保护的资源。</p>
+</li>
+<li><p><strong>系统权限：</strong> 一些特殊的系统应用程序可能拥有更高的权限，恶意软件可以尝试利用这些权限来获取其他应用程序的权限。</p>
+</li>
+<li><p>Android的Accessibility Service来进行权限提升。</p>
 </li>
 </ul>
 <p><strong>社会工程学：</strong></p>
@@ -799,6 +925,11 @@
 </li>
 </ul>
 </li>
+<li><p><strong>示例软件：</strong></p>
+<ul>
+<li><strong>NGate</strong>：NGate Android 恶意软件中继 NFC 流量以窃取现金:<a class="link"   target="_blank" rel="noopener" href="https://www.welivesecurity.com/en/eset-research/ngate-android-malware-relays-nfc-traffic-to-steal-cash/" >https://www.welivesecurity.com/en/eset-research/ngate-android-malware-relays-nfc-traffic-to-steal-cash/<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+</li>
 </ul>
 <p><strong>4. Wi-Fi 传播：</strong></p>
 <ul>
@@ -885,27 +1016,111 @@
 </li>
 </ul>
 <h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="广告（弹窗"><a href="#广告（弹窗" class="headerlink" title="广告（弹窗)"></a>广告（弹窗)</h3><p>广告（弹窗）类型：</p>
+<p> <strong>根据技术实现分类（Android 特有）：</strong></p>
 <ul>
-<li>全屏广告：覆盖整个屏幕，适合展示丰富内容（如图片或视频）。</li>
-<li>模态窗口：弹窗居中，用户必须关闭后才能继续操作。</li>
-<li>通知式弹窗：出现在屏幕顶部或底部，短时间后自动消失。</li>
-</ul>
-<p>广告SDK也可能被利用</p>
-<h4 id="恶意类型："><a href="#恶意类型：" class="headerlink" title="恶意类型："></a>恶意类型：</h4><ul>
-<li><p>点击欺诈：</p>
+<li><p><strong>Activity 弹窗：</strong></p>
 <ul>
-<li>攻击者使用机器人或其他自动化方式人为地增加广告的点击次数。这会耗尽广告商的预算，而不会产生真正的潜在客户或转化。</li>
-<li>这可能包括点击垃圾 (来自虚假用户的多次点击) 和广告堆叠 (多个广告层层叠加，当用户只点击一次时，所有广告都记录点击)。</li>
+<li><p>使用 Android 的 Activity 组件实现的弹窗。</p>
+</li>
+<li><p>具有较高的灵活性和自定义能力，可以实现复杂的动画效果和交互逻辑。</p>
+</li>
 </ul>
 </li>
-<li><p>展示欺诈：</p>
+<li><p><strong>Dialog 弹窗：</strong></p>
 <ul>
-<li>与点击欺诈类似，攻击者生成虚假的广告展示 (即向虚假或隐形用户展示广告)，耗尽广告预算，而不会为广告商提供价值。</li>
+<li><p>使用 Android 的 Dialog 组件实现的弹窗。</p>
+</li>
+<li><p>比较轻量级，适用于显示简单的提示信息或确认对话框。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Notification 弹窗：</strong></p>
+<ul>
+<li><p>使用 Android 的 NotificationManager 实现的弹窗，通常显示在通知栏中。</p>
+</li>
+<li><p>可以显示各种通知信息，例如消息、提醒或进度。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>SYSTEM_ALERT_WINDOW 弹窗：</strong></p>
+<ul>
+<li><p>使用 SYSTEM_ALERT_WINDOW权限在其他应用之上绘制的浮窗，常用于显示广告。</p>
+</li>
+<li><p>可以覆盖其他应用界面，比较具有侵入性。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="恶意类型："><a href="#恶意类型：" class="headerlink" title="恶意类型："></a>恶意类型：</h4><ol>
+<li><p><strong>恶意广告主：</strong></p>
+<ul>
+<li><p>一些恶意广告主会投放恶意广告，如包含恶意代码、链接的广告，诱导用户点击，从而感染恶意软件或进行网络钓鱼。</p>
+</li>
+<li><p>恶意广告主可能使用欺诈手段，例如，点击欺诈、展示欺诈等，骗取广告费用。</p>
+</li>
+<li><p><strong>通过恶意广告SDK传播恶意软件:</strong> 恶意广告主可能会使用恶意的广告SDK（软件开发工具包），在合法的广告中植入恶意代码，从而传播恶意软件。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>恶意发布商：</strong></p>
+<ul>
+<li><p>一些恶意发布商会通过各种手段欺骗广告联盟，例如，刷流量、伪造用户数据，从而骗取广告收入。 攻击者使用机器人或其他自动化方式人为地增加广告的点击次数。这会耗尽广告商的预算，而不会产生真正的潜在客户或转化。</p>
+</li>
+<li><p>这可能包括点击垃圾 (来自虚假用户的多次点击) 和广告堆叠 (多个广告层层叠加，当用户只点击一次时，所有广告都记录点击)。</p>
+</li>
+<li><p>恶意发布商可能会在其广告位上展示恶意广告，给用户带来风险。</p>
+</li>
+<li><p>恶意发布商也可能会利用漏洞或后门，在用户的浏览器或设备上安装恶意软件。</p>
+</li>
 </ul>
 </li>
 <li><p>无限弹窗消耗资源并导致程序崩溃</p>
 </li>
+<li><p>植入恶意代码（webView)</p>
+</li>
+<li><p>点击欺诈</p>
+</li>
+</ol>
+<h4 id="广告联盟"><a href="#广告联盟" class="headerlink" title="广告联盟"></a>广告联盟</h4><ol>
+<li><p><strong>广告跟踪与数据收集：</strong></p>
+<ul>
+<li><p>广告联盟会跟踪广告的展示、点击、转化等数据，以评估广告效果。</p>
+</li>
+<li><p>广告联盟会收集用户的行为数据，如浏览历史、搜索记录、兴趣爱好等，以便更精准地投放广告。</p>
+</li>
+<li><p>广告联盟使用各种跟踪技术，例如：</p>
+<ul>
+<li><p><strong>Cookie：</strong> 在用户浏览器中存储的小型文本文件，用于跟踪用户行为。</p>
+</li>
+<li><p><strong>Pixel：</strong> 嵌入在网页中的一小段代码，用于跟踪用户的浏览行为。</p>
+</li>
+<li><p><strong>移动广告ID：</strong> 在移动设备上用于跟踪用户行为的唯一标识符。</p>
+</li>
+<li><p><strong>服务器端跟踪：</strong> 通过服务器端记录用户的行为数据，相比客户端跟踪，更加可靠和精准。</p>
+</li>
 </ul>
+</li>
+</ul>
+</li>
+<li><p><strong>广告结算：</strong></p>
+<ul>
+<li><p>广告主根据广告效果向广告联盟支付广告费用。</p>
+</li>
+<li><p>广告联盟会根据合同约定将广告收入分给发布商。</p>
+</li>
+<li><p>广告结算通常采用以下几种方式：</p>
+<ul>
+<li><p><strong>CPM (Cost Per Mille)：</strong> 按广告展示次数收费（每千次展示）。</p>
+</li>
+<li><p><strong>CPC (Cost Per Click)：</strong> 按广告点击次数收费。</p>
+</li>
+<li><p><strong>CPA (Cost Per Action)：</strong> 按用户完成特定行为（如注册、购买）收费。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
 <h4 id="绕过广告拦截器"><a href="#绕过广告拦截器" class="headerlink" title="绕过广告拦截器"></a>绕过广告拦截器</h4><p>利用白名单、修改广告代码、使用混淆技术</p>
 <p><strong>广告软件示例：</strong></p>
 <ul>
@@ -930,12 +1145,283 @@
 <li><strong>CoolWebSearch</strong>– 该程序利用 Internet Explorer 中的安全漏洞劫持浏览器、更改设置并将浏览数据发送给其作者。</li>
 <li><strong>Gator</strong> – 该程序通常与文件共享软件（如 Kazaa）捆绑在一起，监控受害者的网上冲浪习惯，使用这些信息为他们提供特定的广告。</li>
 </ul>
+<p><strong>相关文章：</strong></p>
+<ul>
+<li>AudioGuard ：基于每个进程控制麦克风访问：<a class="link"   target="_blank" rel="noopener" href="https://0mwindybug.github.io/AudioGuard/" >https://0mwindybug.github.io/AudioGuard/<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
 <h3 id="PUP-恶意软件（捆绑下载）"><a href="#PUP-恶意软件（捆绑下载）" class="headerlink" title="PUP 恶意软件（捆绑下载）"></a>PUP 恶意软件（捆绑下载）</h3><p>PUP 的传播方式<br>诱导用户安装的方法</p>
 <p><strong>PUP 恶意软件示例：</strong></p>
 <ul>
 <li><strong>Mindspark 恶意软件</strong> – 这是一个易于安装的 PUP ，在用户不注意的时候下载到用户的机器上。Mindspark 可以在用户不知情的情况下更改设置并触发设备上的行为。它出了名的难以消除。</li>
 </ul>
-<h3 id="远程控制-rootkit"><a href="#远程控制-rootkit" class="headerlink" title="远程控制 rootkit"></a>远程控制 rootkit</h3><p><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit" >https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="远程控制-rootkit"><a href="#远程控制-rootkit" class="headerlink" title="远程控制 rootkit"></a>远程控制 rootkit</h3><p><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit" >https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit<i class="fas fa-external-link-alt"></i></a><br><strong>Android 平台上的 Rootkit</strong></p>
+<ul>
+<li><p><strong>定义：</strong> Android 平台上的 Rootkit 是一种恶意软件，旨在隐藏其在 Android 系统中的存在，并允许攻击者保持对受感染设备的访问权限。</p>
+</li>
+<li><p><strong>类型：</strong></p>
+<ul>
+<li><p><strong>用户模式 Rootkit:</strong></p>
+<ul>
+<li><p><strong>表现：</strong> 在用户模式下运行，通常以应用的形式出现，并利用 Hook 技术隐藏自身。</p>
+</li>
+<li><p><strong>攻击：</strong> 可以隐藏恶意应用图标，劫持系统 API，窃取用户数据。</p>
+</li>
+<li><p><strong>检测：</strong> 相对容易被检测，可以通过应用管理器、安全软件等进行检测。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>内核模式 Rootkit:</strong></p>
+<ul>
+<li><p><strong>表现：</strong> 在内核模式下运行，通过修改内核代码或驱动程序来隐藏恶意行为。</p>
+</li>
+<li><p><strong>攻击：</strong> 可以直接控制系统资源、绕过权限检查、实现持久化。</p>
+</li>
+<li><p><strong>检测：</strong> 难以检测，需要专门的内核调试工具和安全分析技术。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>基于 Xposed 或 Magisk 模块的 Rootkit:</strong></p>
+<ul>
+<li><p><strong>表现：</strong> 利用 Xposed 或 Magisk 框架，注入恶意模块，从而控制系统。</p>
+</li>
+<li><p><strong>攻击：</strong> 可以修改系统行为，劫持应用 API，进行各种恶意操作。</p>
+</li>
+<li><p><strong>检测：</strong> 依赖于 Xposed 或 Magisk 的检测工具，可以被用户卸载。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>攻击方式:</strong></p>
+<ul>
+<li><p><strong>Hooking:</strong> 修改系统API，拦截或修改系统调用，例如hook open、read、write等API，从而隐藏恶意行为。</p>
+</li>
+<li><p><strong>隐藏恶意文件和进程：</strong> 修改文件系统、进程列表等，使得恶意文件和进程在系统中不可见。</p>
+</li>
+<li><p><strong>修改系统配置文件：</strong> 修改 build.prop、init.rc 等配置文件，以实现持久化或隐藏自身。</p>
+</li>
+<li><p><strong>利用漏洞：</strong> 利用 Android 系统的漏洞进行权限提升或绕过安全机制。</p>
+</li>
+<li><p><strong>伪装成正常应用：</strong> 将 Rootkit 伪装成正常应用，诱骗用户安装。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>恶意行为:</strong></p>
+<ul>
+<li><p><strong>窃取用户数据：</strong> 窃取短信、联系人、通话记录、位置信息、照片、视频等敏感信息。</p>
+</li>
+<li><p><strong>监控用户活动：</strong> 记录键盘输入、屏幕截图、通话录音等。</p>
+</li>
+<li><p><strong>修改系统设置：</strong> 禁用安全功能、修改 DNS 设置、更改网络代理等。</p>
+</li>
+<li><p><strong>进行广告欺诈：</strong> 在后台弹出广告、进行点击欺诈、流量欺诈等。</p>
+</li>
+<li><p><strong>DDoS攻击：</strong> 将受感染的设备变成僵尸网络的一部分，用于发动 DDoS 攻击。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>实际例子：</strong></p>
+<ul>
+<li><ol>
+<li><strong>相关软件&#x2F;工具</strong></li>
+</ol>
+<ul>
+<li><p><strong>Process Hacker:</strong> 用于查看、调试、管理 Windows 进程的工具。</p>
+<ul>
+<li><strong>用途：</strong> 可以查看隐藏进程、模块信息，分析进程行为。</li>
+</ul>
+</li>
+<li><p><strong>Sysinternals Suite:</strong> 微软官方发布的一系列系统工具，用于系统分析和调试。</p>
+<ul>
+<li><strong>用途：</strong> 包含 Process Monitor、Process Explorer 等工具，可以用于查看进程、文件、注册表、网络活动等。</li>
+</ul>
+</li>
+<li><p><strong>IDA Pro&#x2F;Ghidra:</strong> 用于反编译、调试、分析软件的工具。</p>
+<ul>
+<li><strong>用途：</strong> 可以分析恶意代码，找到 Rootkit 的隐藏功能。</li>
+</ul>
+</li>
+<li><p><strong>Android Debug Bridge (ADB):</strong> Android 开发工具，可以用于调试 Android 设备。</p>
+</li>
+<li><p><strong>用途：</strong> 调试 Android 系统，提取恶意软件信息。</p>
+</li>
+<li><p><strong>Xposed&#x2F;Magisk：</strong> Android 框架，可以用于注入代码和修改系统行为。</p>
+<ul>
+<li><strong>用途：</strong> Xposed 和 Magisk 既可以被用于开发有用的模块，也可能被恶意软件开发者利用。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li><p><strong>实际利用例子</strong></p>
+<ul>
+<li><p><strong>ZeroAccess Rootkit:</strong> 一种 Windows 内核模式 Rootkit，用于生成点击欺诈流量。</p>
+</li>
+<li><p><strong>Sony BMG Rootkit:</strong> Sony BMG 公司在其音乐 CD 中安装的 Rootkit，用于阻止用户复制音乐，但也带来了安全风险。</p>
+</li>
+<li><p><strong>Pegasus Spyware:</strong> NSO Group 开发的间谍软件，可以使用多种 Rootkit 技术来感染 Android 和 iOS 设备，并窃取用户数据。</p>
+</li>
+<li><p><strong>Gooligan:</strong> 一种安卓 Rootkit，利用旧安卓版本的漏洞来获取 root 权限，安装恶意软件并窃取用户数据。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="Bootkits"><a href="#Bootkits" class="headerlink" title="Bootkits"></a>Bootkits</h4><p>一种感染 MBR（主引导记录）的 rootkit，它允许在操作系统启动之前加载恶意软件</p>
+<ul>
+<li><p>破坏操作系统的启动过程。</p>
+</li>
+<li><p>感染 MBR (主引导记录)或 UEFI。</p>
+</li>
+<li><p>在操作系统启动之前加载恶意软件。</p>
+</li>
+<li><p>难以被检测和清除。</p>
+</li>
+</ul>
+<p><strong>Android 平台上的 Bootkit</strong></p>
+<ul>
+<li><p><strong>定义：</strong> Android 平台上的 Bootkit 是一种恶意软件，旨在感染 Android 设备的启动过程，通常是在内核加载之前，从而在系统启动的早期就获得控制权。</p>
+</li>
+<li><p><strong>类型:</strong></p>
+<ul>
+<li><p><strong>Bootloader Bootkit:</strong></p>
+<ul>
+<li><p><strong>表现:</strong> 感染Bootloader，可以完全控制设备的启动过程。</p>
+</li>
+<li><p><strong>攻击:</strong> 可以修改内核、驱动等，实现持久化、绕过安全机制。</p>
+</li>
+<li><p><strong>检测:</strong> 非常难以检测，需要刷机、硬件调试等手段。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Kernel Bootkit:</strong></p>
+<ul>
+<li><p><strong>表现:</strong> 感染 Android 内核，通常以内核模块的形式存在。</p>
+</li>
+<li><p><strong>攻击:</strong> 可以直接控制系统资源、绕过安全机制、修改系统行为。</p>
+</li>
+<li><p><strong>检测:</strong> 难以检测，需要专门的内核调试工具和安全分析技术。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Recovery Image Bootkit:</strong></p>
+<ul>
+<li><p><strong>表现:</strong> 感染Recovery镜像，在设备进入Recovery模式时运行。</p>
+</li>
+<li><p><strong>攻击:</strong> 可以修改系统分区、安装恶意软件、擦除用户数据等。</p>
+</li>
+<li><p><strong>检测:</strong> 难以检测，需要检查Recovery镜像文件。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>攻击方式:</strong></p>
+<ul>
+<li><p><strong>感染Bootloader:</strong> 修改 Bootloader 代码，使其在启动时加载恶意代码。</p>
+</li>
+<li><p><strong>替换内核：</strong> 替换 Android 内核，使其加载恶意驱动或模块。</p>
+</li>
+<li><p><strong>修改 init 进程：</strong> 修改 init 进程，使其在系统启动时执行恶意代码。</p>
+</li>
+<li><p><strong>修改 recovery 镜像：</strong> 修改 recovery 镜像，使其在设备进入 recovery 模式时执行恶意代码。</p>
+</li>
+<li><p><strong>利用漏洞:</strong> 利用Bootloader、内核、驱动等漏洞，直接植入Bootkit。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>恶意行为:</strong></p>
+<ul>
+<li><p><strong>持久化：</strong> 确保恶意软件在系统重启、恢复出厂设置后仍然可以运行。</p>
+</li>
+<li><p><strong>绕过安全启动：</strong> 禁用安全启动机制，从而加载恶意内核或驱动程序。</p>
+</li>
+<li><p><strong>控制设备：</strong> 控制 Android 设备的启动过程、操作系统、硬件资源等。</p>
+</li>
+<li><p><strong>窃取用户数据：</strong> 在系统启动的早期窃取用户数据，例如账号密码、银行卡信息等。</p>
+</li>
+<li><p><strong>破坏系统：</strong> 修改系统文件、破坏启动流程等，导致系统无法正常运行。</p>
+</li>
+<li><p><strong>安装恶意软件：</strong> 在系统启动时安装恶意应用，绕过应用商店的审核。</p>
+</li>
+<li><p><strong>远程控制：</strong> 在系统启动时建立后门，允许攻击者远程控制设备。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li><ul>
+<li><p><strong>UEFI Bootkit:</strong></p>
+</li>
+<li><p><strong>功能:</strong> 感染 UEFI 固件，在操作系统加载之前运行。</p>
+</li>
+<li><p><strong>说明:</strong> 由于 UEFI 代码的复杂性，我无法直接提供一个可运行的代码示例。UEFI Bootkit通常需要编写复杂的 UEFI 驱动程序、hook UEFI 服务、操作 UEFI 变量等技术。下面是简化的流程：<br>  1. <strong>获取 UEFI 固件访问权限:</strong> 通过漏洞、恶意更新或供应链攻击等方式获取。<br>  2. <strong>注入恶意模块:</strong> 在 UEFI 固件中植入恶意模块，使其在系统启动时运行。<br>  3. <strong>控制启动流程:</strong> 修改启动流程，加载恶意内核或驱动。<br>  * <strong>实际案例:</strong></p>
+<ul>
+<li><p><strong>Hacking Team UEFI Rootkit:</strong> 意大利公司 Hacking Team 开发的 UEFI Rootkit，用于监视目标用户。</p>
+</li>
+<li><p><strong>LoJax UEFI Rootkit:</strong> APT28 (Fancy Bear) 使用的 UEFI Bootkit，用于持久化攻击，针对政府和国防机构。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>MBR Bootkit</strong></p>
+<ul>
+<li><p><strong>原理：</strong> 将恶意代码写入 MBR (主引导记录) 的前 512 字节，从而在系统启动时执行。</p>
+</li>
+<li><p><strong>实际案例：</strong> <strong>TDL3 (Alureon) Bootkit:</strong> 一种感染 MBR 的 Bootkit，用于劫持 DNS 服务器，传播恶意软件，2010 年左右流行。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>相关软件&#x2F;工具</strong></p>
+<ul>
+<li><p><strong>UEFITool:</strong> 用于分析、修改 UEFI 固件的工具。</p>
+<ul>
+<li><p><strong>用途：</strong> 可以查看 UEFI 固件的结构，提取固件模块，分析固件漏洞，修改固件配置。</p>
+</li>
+<li><p><strong>注意：</strong> UEFITool 既可以用于安全研究，也可能被恶意软件开发者滥用。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Intel System Debugger (ISD):</strong> 用于调试、分析 Intel 平台的固件和操作系统。</p>
+</li>
+<li><p><strong>用途：</strong> 调试固件代码，分析固件漏洞，跟踪系统启动过程。</p>
+</li>
+<li><p><strong>注意：</strong> ISD是一个强大的调试工具，可以被安全研究人员和攻击者使用。</p>
+</li>
+<li><p><strong>Chipsec:</strong> 用于分析、审计 UEFI 安全配置的工具。</p>
+</li>
+<li><p><strong>用途：</strong> 检测 UEFI 固件中的安全漏洞，分析系统安全策略。</p>
+</li>
+<li><p><strong>VirtualBox&#x2F;VMware：</strong> 可以创建虚拟机来测试 Bootkit 代码，避免在真实硬件上造成损害。</p>
+</li>
+<li><p><strong>用途：</strong> 在虚拟机中运行模拟环境，测试恶意代码，调试系统启动过程。</p>
+</li>
+<li><p><strong>注意：</strong> 确保虚拟机环境的安全，防止恶意代码逃逸。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>实际利用例子</strong></p>
+<ul>
+<li><p><strong>FinSpy (FinFisher):</strong> 一种商业间谍软件，使用 Bootkit 来实现持久化，并监控目标设备。</p>
+</li>
+<li><p><strong>Equation Group 的固件植入:</strong> 美国国家安全局（NSA）下属的黑客组织 “方程式组织” 使用固件植入技术，包括 Bootkit，进行网络间谍活动。</p>
+</li>
+<li><p><strong>Darkhotel APT:</strong> 该组织利用 UEFI Bootkit 对酒店网络中的目标计算机进行攻击。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="RAT"><a href="#RAT" class="headerlink" title="RAT"></a>RAT</h3><p>远程访问木马或远程访问工具。用于为攻击者提供对系统的完全控制权。通常带有键盘记录器。</p>
+<ul>
+<li><p>RAT可以提供攻击者完全控制受感染的设备。</p>
+</li>
+<li><p>通常包含键盘记录器、屏幕截图功能、文件管理功能等。</p>
+</li>
+<li><p>可以通过多种方式传播，例如电子邮件、恶意网站、软件漏洞等。</p>
+</li>
+</ul>
 <h3 id="阻止卸载"><a href="#阻止卸载" class="headerlink" title="阻止卸载"></a>阻止卸载</h3><h4 id="卸载时发生了什么："><a href="#卸载时发生了什么：" class="headerlink" title="卸载时发生了什么："></a>卸载时发生了什么：</h4><p><strong>1.系统处理卸载请求：</strong></p>
 <ul>
 <li><p><strong>PackageManagerService：</strong> 当用户触发卸载操作后，系统会通过 PackageManagerService (Android包管理服务)来处理卸载请求。</p>
@@ -1102,7 +1588,7 @@
 <li>2001 年，一位自称为”Lion”的恶意软件开发者发布了一种混合恶意软件：蠕虫&#x2F;rootkit组合。<a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit" >Rootkits<i class="fas fa-external-link-alt"></i></a>允许黑客操纵操作系统文件，而蠕虫是快速传播代码段的强大载体。这种恶意组合造成了严重破坏：它对 10,000 多个Linux 系统造成了损害。蠕虫&#x2F;rootkit 组合恶意软件被明确设计为利用 Linux 系统中的漏洞。</li>
 <li>Dridex:该恶意软件的目标是 Windows 用户，他们在 Word 或 Excel 中打开电子邮件附件 ，导致宏激活和下载 Dridex，感染计算机并使受害者面临银行盗窃。该软件的主要目标是从受感染机器的用户那里窃取银行信息,以立即启动欺诈交易。软件的 Bank 信息会安装键盘侦听器并执行注入攻击。</li>
 </ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-ransomware-as-a-service" >https://www.kaspersky.com.cn/resource-center/definitions/what-is-ransomware-as-a-service<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/threats/types-of-malware" >https://www.kaspersky.com.cn/resource-center/threats/types-of-malware<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit" >https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://source.android.com/docs/core/permissions?hl=zh-cn" >https://source.android.com/docs/core/permissions?hl=zh-cn<i class="fas fa-external-link-alt"></i></a><br>ek:<a class="link"   target="_blank" rel="noopener" href="https://unit42.paloaltonetworks.com/unit42-understanding-angler-exploit-kit-part-1-exploit-kit-fundamentals/" >https://unit42.paloaltonetworks.com/unit42-understanding-angler-exploit-kit-part-1-exploit-kit-fundamentals/<i class="fas fa-external-link-alt"></i></a><br>路过式下载:<a class="link"   target="_blank" rel="noopener" href="https://www.51cto.com/article/317226.html" >https://www.51cto.com/article/317226.html<i class="fas fa-external-link-alt"></i></a><br>资源社区推荐，下载附件时请注意，它们可能会造成不可控的伤害<br><a class="link"   target="_blank" rel="noopener" href="https://github.com/ytisf/thezoo" >https://github.com/ytisf/thezoo<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://virusshare.com/" >https://virusshare.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://malwaretech.com/" >https://malwaretech.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://virus.exchange/samples" >https://virus.exchange/samples<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://vx-underground.org/" >https://vx-underground.org/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://reverseengineering.meta.stackexchange.com/" >https://reverseengineering.meta.stackexchange.com/<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-ransomware-as-a-service" >https://www.kaspersky.com.cn/resource-center/definitions/what-is-ransomware-as-a-service<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/threats/types-of-malware" >https://www.kaspersky.com.cn/resource-center/threats/types-of-malware<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit" >https://www.kaspersky.com.cn/resource-center/definitions/what-is-rootkit<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://source.android.com/docs/core/permissions?hl=zh-cn" >https://source.android.com/docs/core/permissions?hl=zh-cn<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://bible.malcore.io/readme/the-beginning/introduction-to-malware" >https://bible.malcore.io/readme/the-beginning/introduction-to-malware<i class="fas fa-external-link-alt"></i></a><br>ek:<a class="link"   target="_blank" rel="noopener" href="https://unit42.paloaltonetworks.com/unit42-understanding-angler-exploit-kit-part-1-exploit-kit-fundamentals/" >https://unit42.paloaltonetworks.com/unit42-understanding-angler-exploit-kit-part-1-exploit-kit-fundamentals/<i class="fas fa-external-link-alt"></i></a><br>路过式下载:<a class="link"   target="_blank" rel="noopener" href="https://www.51cto.com/article/317226.html" >https://www.51cto.com/article/317226.html<i class="fas fa-external-link-alt"></i></a><br>广告联盟:<a class="link"   target="_blank" rel="noopener" href="https://u.oppomobile.com/home/_book/%E5%90%88%E4%BD%9C%E6%B3%A8%E5%86%8C/%E5%90%88%E4%BD%9C%E6%B5%81%E7%A8%8B.html" >https://u.oppomobile.com/home/_book/%E5%90%88%E4%BD%9C%E6%B3%A8%E5%86%8C/%E5%90%88%E4%BD%9C%E6%B5%81%E7%A8%8B.html<i class="fas fa-external-link-alt"></i></a><br>资源社区推荐，下载附件时请注意，它们可能会造成不可控的伤害<br><a class="link"   target="_blank" rel="noopener" href="https://github.com/ytisf/thezoo" >https://github.com/ytisf/thezoo<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://virusshare.com/" >https://virusshare.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://malwaretech.com/" >https://malwaretech.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://virus.exchange/samples" >https://virus.exchange/samples<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://vx-underground.org/" >https://vx-underground.org/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://reverseengineering.meta.stackexchange.com/" >https://reverseengineering.meta.stackexchange.com/<i class="fas fa-external-link-alt"></i></a></p>
 
                     
                 </div>
@@ -1260,7 +1746,7 @@
             <div class="pc-post-toc left-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90"><span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD"><span class="nav-text">恶意功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%B4%E5%9D%8F%E6%80%A7"><span class="nav-text">破坏性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E6%93%8D%E4%BD%9C%EF%BC%88%E9%9D%9E%E9%A2%84%E6%9C%9F%EF%BC%8C%E4%B8%8D%E8%A2%AB%E5%B8%8C%E6%9C%9B%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-text">恶意操作（非预期，不被希望的操作）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E9%97%A8"><span class="nav-text">后门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E8%87%AA%E8%BA%AB"><span class="nav-text">隐藏自身</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E4%BB%98%E5%8A%AB%E6%8C%81"><span class="nav-text">支付劫持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">激活方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90"><span class="nav-text">权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%9D%83%E9%99%90"><span class="nav-text">获取权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root%E6%9D%83%E9%99%90"><span class="nav-text">root权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E5%88%97%E8%A1%A8"><span class="nav-text">权限列表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E6%92%AD%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E6%9C%AC%E4%BD%93"><span class="nav-text">传播恶意软件本体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6-%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1"><span class="nav-text">电子邮件&#x2F;手机短信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EK"><span class="nav-text">EK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A"><span class="nav-text">广告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%95%86%E5%BA%97"><span class="nav-text">应用商店</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E4%BC%A0%E6%92%AD"><span class="nav-text">设备传播</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%EF%BC%88%E5%BC%B9%E7%AA%97"><span class="nav-text">广告（弹窗)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E7%B1%BB%E5%9E%8B%EF%BC%9A"><span class="nav-text">恶意类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="nav-text">绕过广告拦截器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2"><span class="nav-text">勒索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2%E8%BD%AF%E4%BB%B6%E5%8D%B3%E6%9C%8D%E5%8A%A1-Raas"><span class="nav-text">勒索软件即服务 (Raas)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%B4%E8%B0%8D%EF%BC%88%E7%AA%83%E5%8F%96%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="nav-text">间谍（窃取信息）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUP-%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%EF%BC%88%E6%8D%86%E7%BB%91%E4%B8%8B%E8%BD%BD%EF%BC%89"><span class="nav-text">PUP 恶意软件（捆绑下载）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6-rootkit"><span class="nav-text">远程控制 rootkit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD"><span class="nav-text">阻止卸载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9A"><span class="nav-text">卸载时发生了什么：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%8D%B8%E8%BD%BD%EF%BC%9A"><span class="nav-text">检测卸载：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD-1"><span class="nav-text">阻止卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C"><span class="nav-text">僵尸网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E5%97%85%E6%8E%A2%E5%99%A8"><span class="nav-text">数据包嗅探器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%A8%E9%A9%AC"><span class="nav-text">木马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A0%95%E8%99%AB"><span class="nav-text">蠕虫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%97%85%E6%AF%92"><span class="nav-text">病毒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B"><span class="nav-text">其他类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E6%96%87%E4%BB%B6%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">无文件恶意软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%82%B8%E5%BC%B9"><span class="nav-text">逻辑炸弹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">混合恶意软件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90"><span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD"><span class="nav-text">恶意功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%B4%E5%9D%8F%E6%80%A7"><span class="nav-text">破坏性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E6%93%8D%E4%BD%9C%EF%BC%88%E9%9D%9E%E9%A2%84%E6%9C%9F%EF%BC%8C%E4%B8%8D%E8%A2%AB%E5%B8%8C%E6%9C%9B%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-text">恶意操作（非预期，不被希望的操作）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%93%8D%E4%BD%9C"><span class="nav-text">代码操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E9%97%A8"><span class="nav-text">后门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E4%B8%8E%E6%8E%A7%E5%88%B6c2"><span class="nav-text">命令与控制c2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E8%87%AA%E8%BA%AB"><span class="nav-text">隐藏自身</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E4%BB%98%E5%8A%AB%E6%8C%81"><span class="nav-text">支付劫持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">激活方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90"><span class="nav-text">权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%9D%83%E9%99%90"><span class="nav-text">获取权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root%E6%9D%83%E9%99%90"><span class="nav-text">root权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E5%88%97%E8%A1%A8"><span class="nav-text">权限列表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E6%92%AD%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E6%9C%AC%E4%BD%93"><span class="nav-text">传播恶意软件本体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6-%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1"><span class="nav-text">电子邮件&#x2F;手机短信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EK"><span class="nav-text">EK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A"><span class="nav-text">广告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%95%86%E5%BA%97"><span class="nav-text">应用商店</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E4%BC%A0%E6%92%AD"><span class="nav-text">设备传播</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%EF%BC%88%E5%BC%B9%E7%AA%97"><span class="nav-text">广告（弹窗)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E7%B1%BB%E5%9E%8B%EF%BC%9A"><span class="nav-text">恶意类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%E8%81%94%E7%9B%9F"><span class="nav-text">广告联盟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="nav-text">绕过广告拦截器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2"><span class="nav-text">勒索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2%E8%BD%AF%E4%BB%B6%E5%8D%B3%E6%9C%8D%E5%8A%A1-Raas"><span class="nav-text">勒索软件即服务 (Raas)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%B4%E8%B0%8D%EF%BC%88%E7%AA%83%E5%8F%96%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="nav-text">间谍（窃取信息）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUP-%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%EF%BC%88%E6%8D%86%E7%BB%91%E4%B8%8B%E8%BD%BD%EF%BC%89"><span class="nav-text">PUP 恶意软件（捆绑下载）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6-rootkit"><span class="nav-text">远程控制 rootkit</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bootkits"><span class="nav-text">Bootkits</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RAT"><span class="nav-text">RAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD"><span class="nav-text">阻止卸载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9A"><span class="nav-text">卸载时发生了什么：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%8D%B8%E8%BD%BD%EF%BC%9A"><span class="nav-text">检测卸载：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD-1"><span class="nav-text">阻止卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C"><span class="nav-text">僵尸网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E5%97%85%E6%8E%A2%E5%99%A8"><span class="nav-text">数据包嗅探器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%A8%E9%A9%AC"><span class="nav-text">木马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A0%95%E8%99%AB"><span class="nav-text">蠕虫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%97%85%E6%AF%92"><span class="nav-text">病毒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B"><span class="nav-text">其他类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E6%96%87%E4%BB%B6%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">无文件恶意软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%82%B8%E5%BC%B9"><span class="nav-text">逻辑炸弹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">混合恶意软件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
     </div>
 </div>
 
@@ -1295,7 +1781,7 @@
             
                 <span class="count-item border-box word">
                     <span class="item-type border-box">总字数</span>
-                    <span class="item-value border-box word">34.5k</span>
+                    <span class="item-value border-box word">39.2k</span>
                 </span>
             
 
@@ -1456,7 +1942,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90"><span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD"><span class="nav-text">恶意功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%B4%E5%9D%8F%E6%80%A7"><span class="nav-text">破坏性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E6%93%8D%E4%BD%9C%EF%BC%88%E9%9D%9E%E9%A2%84%E6%9C%9F%EF%BC%8C%E4%B8%8D%E8%A2%AB%E5%B8%8C%E6%9C%9B%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-text">恶意操作（非预期，不被希望的操作）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E9%97%A8"><span class="nav-text">后门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E8%87%AA%E8%BA%AB"><span class="nav-text">隐藏自身</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E4%BB%98%E5%8A%AB%E6%8C%81"><span class="nav-text">支付劫持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">激活方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90"><span class="nav-text">权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%9D%83%E9%99%90"><span class="nav-text">获取权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root%E6%9D%83%E9%99%90"><span class="nav-text">root权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E5%88%97%E8%A1%A8"><span class="nav-text">权限列表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E6%92%AD%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E6%9C%AC%E4%BD%93"><span class="nav-text">传播恶意软件本体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6-%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1"><span class="nav-text">电子邮件&#x2F;手机短信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EK"><span class="nav-text">EK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A"><span class="nav-text">广告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%95%86%E5%BA%97"><span class="nav-text">应用商店</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E4%BC%A0%E6%92%AD"><span class="nav-text">设备传播</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%EF%BC%88%E5%BC%B9%E7%AA%97"><span class="nav-text">广告（弹窗)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E7%B1%BB%E5%9E%8B%EF%BC%9A"><span class="nav-text">恶意类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="nav-text">绕过广告拦截器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2"><span class="nav-text">勒索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2%E8%BD%AF%E4%BB%B6%E5%8D%B3%E6%9C%8D%E5%8A%A1-Raas"><span class="nav-text">勒索软件即服务 (Raas)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%B4%E8%B0%8D%EF%BC%88%E7%AA%83%E5%8F%96%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="nav-text">间谍（窃取信息）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUP-%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%EF%BC%88%E6%8D%86%E7%BB%91%E4%B8%8B%E8%BD%BD%EF%BC%89"><span class="nav-text">PUP 恶意软件（捆绑下载）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6-rootkit"><span class="nav-text">远程控制 rootkit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD"><span class="nav-text">阻止卸载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9A"><span class="nav-text">卸载时发生了什么：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%8D%B8%E8%BD%BD%EF%BC%9A"><span class="nav-text">检测卸载：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD-1"><span class="nav-text">阻止卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C"><span class="nav-text">僵尸网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E5%97%85%E6%8E%A2%E5%99%A8"><span class="nav-text">数据包嗅探器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%A8%E9%A9%AC"><span class="nav-text">木马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A0%95%E8%99%AB"><span class="nav-text">蠕虫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%97%85%E6%AF%92"><span class="nav-text">病毒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B"><span class="nav-text">其他类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E6%96%87%E4%BB%B6%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">无文件恶意软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%82%B8%E5%BC%B9"><span class="nav-text">逻辑炸弹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">混合恶意软件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90"><span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD"><span class="nav-text">恶意功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%B4%E5%9D%8F%E6%80%A7"><span class="nav-text">破坏性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E6%93%8D%E4%BD%9C%EF%BC%88%E9%9D%9E%E9%A2%84%E6%9C%9F%EF%BC%8C%E4%B8%8D%E8%A2%AB%E5%B8%8C%E6%9C%9B%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-text">恶意操作（非预期，不被希望的操作）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%93%8D%E4%BD%9C"><span class="nav-text">代码操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E9%97%A8"><span class="nav-text">后门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E4%B8%8E%E6%8E%A7%E5%88%B6c2"><span class="nav-text">命令与控制c2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E8%87%AA%E8%BA%AB"><span class="nav-text">隐藏自身</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E4%BB%98%E5%8A%AB%E6%8C%81"><span class="nav-text">支付劫持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">激活方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90"><span class="nav-text">权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%9D%83%E9%99%90"><span class="nav-text">获取权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root%E6%9D%83%E9%99%90"><span class="nav-text">root权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E5%88%97%E8%A1%A8"><span class="nav-text">权限列表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E6%92%AD%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E6%9C%AC%E4%BD%93"><span class="nav-text">传播恶意软件本体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6-%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1"><span class="nav-text">电子邮件&#x2F;手机短信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EK"><span class="nav-text">EK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A"><span class="nav-text">广告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%95%86%E5%BA%97"><span class="nav-text">应用商店</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E4%BC%A0%E6%92%AD"><span class="nav-text">设备传播</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%EF%BC%88%E5%BC%B9%E7%AA%97"><span class="nav-text">广告（弹窗)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E7%B1%BB%E5%9E%8B%EF%BC%9A"><span class="nav-text">恶意类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%E8%81%94%E7%9B%9F"><span class="nav-text">广告联盟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="nav-text">绕过广告拦截器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2"><span class="nav-text">勒索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8B%92%E7%B4%A2%E8%BD%AF%E4%BB%B6%E5%8D%B3%E6%9C%8D%E5%8A%A1-Raas"><span class="nav-text">勒索软件即服务 (Raas)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%B4%E8%B0%8D%EF%BC%88%E7%AA%83%E5%8F%96%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="nav-text">间谍（窃取信息）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUP-%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%EF%BC%88%E6%8D%86%E7%BB%91%E4%B8%8B%E8%BD%BD%EF%BC%89"><span class="nav-text">PUP 恶意软件（捆绑下载）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6-rootkit"><span class="nav-text">远程控制 rootkit</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bootkits"><span class="nav-text">Bootkits</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RAT"><span class="nav-text">RAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD"><span class="nav-text">阻止卸载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9A"><span class="nav-text">卸载时发生了什么：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%8D%B8%E8%BD%BD%EF%BC%9A"><span class="nav-text">检测卸载：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%BB%E6%AD%A2%E5%8D%B8%E8%BD%BD-1"><span class="nav-text">阻止卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C"><span class="nav-text">僵尸网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E5%97%85%E6%8E%A2%E5%99%A8"><span class="nav-text">数据包嗅探器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%A8%E9%A9%AC"><span class="nav-text">木马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A0%95%E8%99%AB"><span class="nav-text">蠕虫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%97%85%E6%AF%92"><span class="nav-text">病毒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B"><span class="nav-text">其他类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E6%96%87%E4%BB%B6%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">无文件恶意软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%82%B8%E5%BC%B9"><span class="nav-text">逻辑炸弹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6"><span class="nav-text">混合恶意软件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
     </div>
 </div>
 
