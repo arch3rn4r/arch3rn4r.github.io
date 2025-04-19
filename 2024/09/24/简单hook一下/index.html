@@ -263,7 +263,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Thu Sep 26 2024 22:12:54 GMT+0800">2024-09-26 22:12:54</span>
+                <span class="datetime" data-updated="Thu Apr 17 2025 18:32:45 GMT+0800">2025-04-17 18:32:45</span>
             </span>
         
 
@@ -274,7 +274,7 @@
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>822 字</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>825 字</span>
             </span>
         
         
@@ -381,7 +381,7 @@
                        
                  ></p>
 <h2 id="真机hook"><a href="#真机hook" class="headerlink" title="真机hook"></a>真机hook</h2><h3 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h3><p>在手机开发者模式打开usb调试，不同的手机开启方式稍有不同，可以在网上搜索打开方式</p>
-<p>使用adb查看是否连接，不同于模拟机，手机使用usb就连接成功了,可以使用以下指令检测有没有成功安装</p>
+<p>将usb线连上手机，在手机确认连接,可以使用以下指令检测有没有成功安装</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\adb devices</span><br></pre></td></tr></table></figure>
 
 <p>将apk安装到手机</p>
@@ -389,6 +389,9 @@
 
 <p>使用shell启动fs</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.\adb shell</span><br><span class="line">su</span><br><span class="line">cd data/local/tmp</span><br><span class="line">./fs</span><br></pre></td></tr></table></figure>
+
+<p>然后进行端口转发</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./adb forward tcp:27042 tcp:27042</span><br></pre></td></tr></table></figure>
 
 <p>将hook.js文件连接上手机</p>
 <p><code>frida -U CrackMe1 -l hook.js</code></p>
@@ -690,7 +693,7 @@
             
                 <span class="count-item border-box word">
                     <span class="item-type border-box">总字数</span>
-                    <span class="item-value border-box word">50.8k</span>
+                    <span class="item-value border-box word">55.5k</span>
                 </span>
             
 
