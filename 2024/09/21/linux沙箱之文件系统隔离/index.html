@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="arch3rn4r">
+    
+    <title>
+        
+            linux沙箱之文件系统隔离 |
+        
+        arch3rn4r
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"arch3rn4r.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"arch3rn4r","author":"arch3rn4r","avatar":"/images/beauty/myhead.svg"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/beauty/bg.jpg","background_img_dark":"https://arch3rn4r.github.io/picx-images-hosting/20240915/EYnModKVcAAy6sw.4g4g8oqoi0.webp","description":"这里是雨季，你那里阳光明媚吗","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"announcement":null,"category":false,"tag":true,"post_datetime":"updated"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":"ture"},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default","code_block_shrink":false},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"left"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":true,"use":"giscus","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.36"},"waline":{"server_url":null,"reaction":false,"version":"3.2.1"},"giscus":{"repo":"arch3rn4r/arch3rn4r.github.io","repo_id":"R_kgDOLnMFhw","category":"Announcements","category_id":"DIC_kwDOLnMFh84Cik-D","reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="arch3rn4r" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               arch3rn4r
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        linux沙箱之文件系统隔离
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/beauty/myhead.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">arch3rn4r</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-09-21 14:33:13</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri May 02 2025 10:41:58 GMT+0800">2025-05-02 10:41:58</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>3.4k 字</span>
+            </span>
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="chroot介绍"><a href="#chroot介绍" class="headerlink" title="chroot介绍"></a>chroot介绍</h2><p>通常来说，提到chroot一般有两个含义，chroot(1)是&#x2F;usr&#x2F;bin&#x2F;chroot,要有一定权限才能使用chroot, chroot(2)是glibc中的一个函数,属于系统调用</p>
+<blockquote>
+<p>chroot(1)<br>chroot - run command or interactive shell with special root directory 一个命令行工具，可用于创建沙箱shell，用于交互式 shell 或命令的文件系统隔离</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chroot</span> [OPTION] NEWROOT [COMMAND [ARG]…]</span><br><span class="line">sudo <span class="built_in">chroot</span> /my/new/root /bin/bash</span><br><span class="line">这将启动一个 Bash shell，并将 /my/new/root 作为新根目录。</span><br></pre></td></tr></table></figure>
+
+<p><strong>影响范围</strong>：只限于执行 <code>chroot</code> 后启动的进程以及它们的子进程。例如，如果你在一个 shell 中执行 <code>chroot /my/new/root /bin/bash</code>，那么这个新启动的 Bash shell和它的子进程会在 <code>/my/new/root</code> 作为根目录的环境下运行。</p>
+<p><strong>不影响其他 shell</strong>：其他已经存在的 shell，或者你之后在原始环境中启动的 shell，都不受 <code>chroot</code> 的影响，它们仍然使用原来的根目录。</p>
+<blockquote>
+<p>chroot(2)<br>chroot - change root directory 用于编程接口下的根目录更改</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int <span class="built_in">chroot</span>(const char *path);</span><br><span class="line">path：要作为新根目录的路径。</span><br><span class="line">返回值：成功返回 0，失败返回 -1，并设置 errno 来指示错误类型。</span><br></pre></td></tr></table></figure>
+
+<p>chroot的主要功能就是改变根目录</p>
+<p>看起来很鸡肋，但是当你的电脑被入侵，而对方入侵的是你的chroot环境，那么他使用cd..&#x2F;就永远跳不出来，比如将chroot设置为&#x2F;tmp&#x2F;jail,他就只能到达&#x2F;tmp&#x2F;jail，不能到达真正的root位置，这样入侵者就只能在特定的文件里运行，将伤害限制在chroot沙盒</p>
+<p>但是要注意使用，一般在测试的时候（也就是设置正确的时候）你能独立的操作chroot空间，也能很轻松的退出来。但如果设置错误(没有使用chdir”&#x2F;“），你的真实根目录就会完全变成chroot的根目录，但是能使用cd退出去 cd..&#x2F;..&#x2F;</p>
+<h3 id="chroot使用及注意事项"><a href="#chroot使用及注意事项" class="headerlink" title="chroot使用及注意事项"></a>chroot使用及注意事项</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">chroot</span> /tmp/jail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>这样执行后会运行错误，因为chroot目录里没有库，可以说，它什么也没有</p>
+<h4 id="chroot-目录最初的状态："><a href="#chroot-目录最初的状态：" class="headerlink" title="chroot 目录最初的状态："></a><strong><code>chroot</code></strong> <strong>目录最初的状态：</strong></h4><ol>
+<li><p>没有系统工具：在 <code>chroot</code> 环境中最初是没有 <code>bash</code>、<code>ls</code>、<code>cat</code> 等常用工具的，除非你手动将它们复制进去。</p>
+</li>
+<li><p>没有库文件：任何程序在运行时所需的库文件也不会自动存在，必须手动添加。即使你将 <code>/bin/bash</code> 复制到 <code>chroot</code> 目录中，仍然需要手动复制与之相关的依赖库。</p>
+</li>
+<li><p>没有配置文件：<code>/etc/passwd</code>、<code>/etc/group</code>、<code>/etc/hosts</code> 等系统配置文件也不会存在，需要手动配置或复制。</p>
+</li>
+<li><p>目录结构：你需要手动创建或复制常见的目录结构，如 <code>/bin</code>、<code>/lib</code>、<code>/etc</code>、<code>/home</code>、<code>dev</code> 等，以使 <code>chroot</code> 环境类似于一个完整的系统。</p>
+</li>
+</ol>
+<p><strong>虽然</strong> <strong><code>chroot</code></strong> <strong>在用户空间内，但文件系统隔离</strong></p>
+<p>尽管 <code>chroot</code> 环境位于用户空间，它的工作原理是通过<strong>文件系统的隔离</strong>机制，给进程提供一个新的文件系统视图。在默认情况下，Linux 的文件系统是全局共享的，任何进程都可以访问 <code>/bin</code>、<code>/usr</code> 等目录。然而，通过 <code>chroot</code>，你可以将某个进程的文件系统访问限制在一个特定的目录下，防止其访问全局的系统资源</p>
+<p>在这种情况下，可以安装busybox</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.busybox.net/" >https://www.busybox.net/<i class="fas fa-external-link-alt"></i></a></p>
+<p><em>BusyBox</em> 是一个集成了一百多个最常用Linux 命令和工具（如 cat 、 echo 、 grep 、 mount 、 telnet 等）的精简工具箱,将它装入chroot目录即可正常执行命令</p>
+<h3 id="jailkit——将攻击者关进chroot-jail"><a href="#jailkit——将攻击者关进chroot-jail" class="headerlink" title="jailkit——将攻击者关进chroot jail"></a>jailkit——将攻击者关进chroot jail</h3><p><a class="link"   target="_blank" rel="noopener" href="https://olivier.sessink.nl/jailkit/" >https://olivier.sessink.nl/jailkit/<i class="fas fa-external-link-alt"></i></a></p>
+<blockquote>
+<p>Jailkit 是一套实用程序，用于增强 chroot jails 的可能性。Jailkit 包含一组工具和配置文件，用于自动部署 chroot jails。Jailkit 还包含各种工具，用于将用户帐户限制为特定文件或特定命令，这些工具可通过配置文件进行配置。设置 chroot shell、限制为某些特定命令的 shell 或 chroot jail 内的守护进程要容易得多，并且可以使用这些实用程序自动完成。</p>
+</blockquote>
+<blockquote>
+<p>Jailkit 是一套专门为安全而开发的工具。如果配置、系统设置或环境不是 100% 安全，它将以安全的方式中止，并向系统日志发送有用的日志消息来解释哪里出了问题。</p>
+</blockquote>
+<blockquote>
+<p>Jailkit 是一款非常稳定的软件，拥有非常稳定和高质量的代码库。据悉，它被多家领先的 IT 安全公司的网络安全设备、多家大型企业的互联网服务器、互联网服务提供商的互联网服务器以及许多需要保护 cvs、sftp、shell 或守护进程的小型公司和私人用户所采用。</p>
+</blockquote>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a><strong>使用</strong></h4><p>1.<strong>安装</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install jailkit</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>创建 Jail 环境</strong></li>
+</ol>
+<p>使用 Jailkit 的 <code>jk_init</code> 命令来初始化 <code>chroot jail</code> 环境。创建一个目录作为新的根目录，并配置一些基础命令和工具。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> /home/jail</span><br><span class="line">sudo jk_init -v /home/jail basicshell</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>basicshell</code> 是 Jailkit 提供的一组预定义的环境配置，它包括基本的 shell 工具，如 <code>ls</code>、<code>cp</code>、<code>mv</code> 等，供用户在 jail 中使用。</li>
+</ul>
+<ol start="3">
+<li><strong>将用户放入 Jail</strong></li>
+</ol>
+<p>使用 <code>jk_jailuser</code> 命令将用户 <code>attacker</code> 限制在 <code>chroot jail</code> 中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo jk_jailuser -m -j /home/jail attacker</span><br></pre></td></tr></table></figure>
+
+<p>这会将 <code>attacker</code> 用户添加到 <code>chroot jail</code> 中，并确保该用户只能访问 jail 中的文件系统。</p>
+<ol start="4">
+<li><strong>测试 Jail 环境</strong></li>
+</ol>
+<p>以用户 <code>attacker</code> 身份登录系统，检查是否被限制在 <code>chroot jail</code> 中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su - attacker</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>登录成功后，用户会发现根目录 <code>/</code> 实际上是 <code>/home/jail</code>，且无法访问系统的其他文件。</li>
+</ul>
+<h4 id="扩展用法"><a href="#扩展用法" class="headerlink" title="扩展用法"></a>扩展用法</h4><ul>
+<li>以上方法是把攻击者关进新的环境，但如果攻击者一开始就偷偷进入系统并新建用户，还在自己的用户下留了恶意文件呢，如何不让攻击者发现自己被发现了</li>
+</ul>
+<p>这个操作比较繁琐我就不一一写了，关键步骤就是新建一个<code>home/jail/home/username(已存在用户）</code>，然后将原用户的文件都复制进去，相应的权限都要一一转移，并且要确保已存在用户对<code>home/jail/home/username</code>操作的权限<code>sudo chown -R existinguser:existinguser /home/jail/home/existinguser</code></p>
+<ul>
+<li>如果在上面的步骤里不小心把自己的用户关进去了，如何释放</li>
+</ul>
+<ol>
+<li><strong>修改用户的登录 shell</strong></li>
+</ol>
+<p>当将用户放入 Jailkit 管理的 <code>chroot jail</code> 环境时，通常会将用户的默认 shell 设置为 <code>jk_chrootsh</code>，<code>jk_chrootsh</code> 是 Jailkit 提供的一种特殊 shell，它能够在用户登录时，自动将该用户的根目录限制在指定的 <code>chroot</code> 环境中。要移出 jail，首先需要将用户的 shell 改回默认的 Bash 或其他常用 shell。</p>
+<p>使用 <code>chsh</code>（change shell）命令更改用户的 shell：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chsh -s /bin/bash username</span><br></pre></td></tr></table></figure>
+
+<p>2**.快照**</p>
+<p>在进行操作前对虚拟机拍摄快照，情况不对则一键还原）</p>
+<h3 id="逃逸"><a href="#逃逸" class="headerlink" title="逃逸"></a>逃逸</h3><ul>
+<li><strong>chroot时存在已打开的资源</strong>：</li>
+</ul>
+<p>对于..&#x2F;的拦截只局限于chroot中，在chroot外的文件不受它控制，所以，如果在使用chroot时正打开了一个文件，那么即使还在chroot内，chroot能用一些复杂的系统调用来利用这些之前被打开的文件，像linux里的open和execve的at变体，openat接受已被打开的资源文件描述符和一条以这个资源为起点的相对路径，所以可以执行一个相对于之前打开的文件的程序，最终这会使你逃离chroot环境。</p>
+<p>当前的工作目录是一个隐式开放资源，因此，当恶意代码获得控制权时，你的工作目录如果不在chroot里，会有问题。</p>
+<p><strong><code>openat</code></strong> 和 **<code>execveat</code>**：这些系统调用的变体允许使用一个打开的文件描述符作为基础来执行文件操作。例如：</p>
+<ul>
+<li><p><code>openat(fd, &quot;../outside_directory&quot;, O_RDONLY)</code>：可以通过 <code>fd</code> 指向的目录路径访问 <code>chroot</code> 之外的文件，前提是 <code>fd</code> 指向的是 <code>chroot</code> 外的资源。</p>
+</li>
+<li><p><code>execveat(fd, &quot;some_program&quot;, ...)</code>：可以从 <code>chroot</code> 外部启动一个新的进程。</p>
+</li>
+<li><p><strong>chroot只能有一个</strong></p>
+</li>
+</ul>
+<p>新chroot会覆盖旧chroot。如果你在chroot环境中拥有root权限，那么你可以设置一个chroot(chroot只有特权用户能设置），用新设置的chroot覆盖之前的chroot)</p>
+<ul>
+<li><strong>使用</strong> <strong><code>pivot_root()</code></strong></li>
+</ul>
+<p><code>pivot_root()</code> 是一个特殊的系统调用，通常用于容器和虚拟化环境，允许进程更改其根文件系统。攻击者可以尝试使用 <code>pivot_root()</code> 将根目录切换到 <code>chroot</code> 之外的目录，从而彻底逃逸。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int ret = pivot_root(<span class="string">&quot;/new_root&quot;</span>, <span class="string">&quot;/old_root&quot;</span>); // 切换根目录</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>未指定工作目录</strong></li>
+</ul>
+<p>如果进入 <code>chroot</code> 时没有更改工作目录，而当前的工作目录在 <code>chroot</code> 外，攻击者可以通过相对路径（如 <code>../</code>）导航回到 <code>chroot</code> 外部。工作目录是进程的一个隐式开放资源，如果未显式改变，仍然可以访问到 <code>chroot</code> 外的目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ../  <span class="comment"># 访问 chroot 之外的目录</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>可使用的工具：</strong></li>
+</ul>
+<p>chroot未隔离网络，使用网络下载工具然后脱离即可</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/earthquake/chw00t" >https://github.com/earthquake/chw00t<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="chroot缺点"><a href="#chroot缺点" class="headerlink" title="chroot缺点"></a>chroot缺点</h3><p>1.chroot不提供其他形式的隔离，比如进程id</p>
+<p><code>echo $$</code>能打印当前shell的进程id</p>
+<p>如果杀死了当前chroot shell的进程id,相当于杀死了当前chroot环境，就能退出了</p>
+<p>2.chroot也不隔离网络，就算在chroot环境也能使用外面的网络，这意味着可以在chroot里下载你所需要的用来破解chroot的工具或环境</p>
+<p>3.容易逃离，如果你是root用户且chroot调用没有被阻塞，就可以使用“覆盖”来逃离</p>
+<p>4.<code>chroot</code> 并不是一个完全安全的隔离机制，因为它只隔离文件系统视图，不隔离文件描述符、工作目录、以及进程通信等系统资源。</p>
+<h2 id="restricted-bash"><a href="#restricted-bash" class="headerlink" title="restricted bash"></a>restricted bash</h2><p><a class="link"   target="_blank" rel="noopener" href="https://www.gnu.org/software/bash/manual/html_node/The-Restricted-Shell.html" >https://www.gnu.org/software/bash/manual/html_node/The-Restricted-Shell.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>rbash限制以下操作：</p>
+<blockquote>
+<p><strong>禁止切换目录</strong>：用户无法使用 <code>cd</code> 命令更改当前工作目录。</p>
+<p><strong>禁止修改****环境变量</strong>：用户不能设置或取消设置如 <code>SHELL</code>、<code>PATH</code>、<code>HISTFILE</code>、<code>ENV</code> 等重要的环境变量。</p>
+<p><strong>禁止执行带有斜杠的命令</strong>：无法使用包含斜杠的命令（如 <code>/bin/ls</code>），避免用户绕过限制执行系统级命令。</p>
+<p><strong>禁止输出重定向</strong>：<code>&gt;</code>、<code>&gt;&gt;</code>、<code>&amp;&gt;</code> 等重定向符号被禁用，防止用户修改文件或输出结果。</p>
+<p><strong>禁止使用</strong> **<code>exec</code>**：无法用 <code>exec</code> 命令替换当前 shell，确保受限环境不会轻易被逃脱。</p>
+<p><strong>不能关闭受限模式</strong>：用户不能通过 <code>set +r</code> 或其他方法禁用受限模式。</p>
+</blockquote>
+<p>正常</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lili@lili-virtual-machine:~/Desktop/myshare$ <span class="built_in">cd</span> ..</span><br><span class="line">lili@lili-virtual-machine:~/Desktop$ </span><br></pre></td></tr></table></figure>
+
+<p>开启rbash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lili@lili-virtual-machine:~/Desktop/myshare$ rbash</span><br><span class="line">lili@lili-virtual-machine:~/Desktop/myshare$ <span class="built_in">cd</span> ..</span><br><span class="line">rbash: <span class="built_in">cd</span>: restricted</span><br></pre></td></tr></table></figure>
+
+<h3 id="逃逸-1"><a href="#逃逸-1" class="headerlink" title="逃逸"></a>逃逸</h3><p>1.<strong>新建另一个shell</strong></p>
+<p><code>rbash</code> 禁止直接执行带有斜杠的命令（如 <code>/bin/bash</code>），但是如果 <code>bash</code> 位于 <code>PATH</code> 目录中，用户可以直接运行 <code>bash</code> 或 <code>sh</code> 来启动一个新的、不受限制的 shell。</p>
+<ul>
+<li><code>PATH</code> 目录的位置</li>
+</ul>
+<p><code>PATH</code> 变量中的每个目录都用冒号（<code>:</code>）分隔，系统会按顺序在这些目录中查找可执行文件。常见的 <code>PATH</code> 目录如下：</p>
+<blockquote>
+<p>&#x2F;usr&#x2F;local&#x2F;sbin</p>
+<p>&#x2F;usr&#x2F;local&#x2F;bin</p>
+<p>&#x2F;usr&#x2F;sbin</p>
+<p>&#x2F;usr&#x2F;bin</p>
+<p>&#x2F;sbin</p>
+<p>&#x2F;bin</p>
+</blockquote>
+<p>效果:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">┌──(pwn㉿kali)-[/usr/bin]</span><br><span class="line">└─$ rbash</span><br><span class="line">┌──(pwn㉿kali)-[/usr/bin]</span><br><span class="line">└─$ <span class="built_in">cd</span> ..                                                                                                                      </span><br><span class="line">rbash: <span class="built_in">cd</span>: 受限</span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[/usr/bin]</span><br><span class="line">└─$ bash                                                                                                                       </span><br><span class="line">┌──(pwn㉿kali)-[/usr/bin]</span><br><span class="line">└─$ <span class="built_in">cd</span> ..                                                                                                                      </span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[/usr]</span><br><span class="line">└─$       </span><br></pre></td></tr></table></figure>
+
+<p>2.<strong>使用**<strong>vi</strong></strong>,nano等编辑器逃脱**</p>
+<p><code>vi</code>后，输入<code>:!bash</code>,就可以新建一个bash,该bash无限制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lili@lili-virtual-machine:~/Desktop/myshare$ <span class="built_in">cd</span> ..</span><br><span class="line">rbash: <span class="built_in">cd</span>: restricted</span><br><span class="line">lili@lili-virtual-machine:~/Desktop/myshare$ vi</span><br><span class="line"></span><br><span class="line">lili@lili-virtual-machine:~/Desktop/myshare$ <span class="built_in">cd</span> ..</span><br><span class="line">lili@lili-virtual-machine:~/Desktop$ </span><br></pre></td></tr></table></figure>
+
+<p>3.<strong>SSH</strong> <strong>远程命令执行</strong></p>
+<p>通过 SSH 连接到服务器并直接执行一个新命令，而不会进入 <code>rbash</code>。例如，使用 SSH 执行 <code>bash</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@server bash</span><br></pre></td></tr></table></figure>
+
+<p>4.<strong>使用编程语言</strong></p>
+<p>直接执行无法执行，但是可以使用python之类的编辑器来执行文件，test.py文件内容为<code>print(&quot;exe a file&quot;)</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">┌──(pwn㉿kali)-[~/桌面/shellcode]</span><br><span class="line">└─$ ./test.py</span><br><span class="line">rbash: ./test.py: 受限：无法在命令名中使用 <span class="string">&quot;/&quot;</span></span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[~/桌面/shellcode]</span><br><span class="line">└─$ python test.py                                                                                                             </span><br><span class="line">exe a file</span><br></pre></td></tr></table></figure>
+
+<p>执行bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import os; os.system(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">┌──(pwn㉿kali)-[~/桌面/shellcode]</span><br><span class="line">└─$ cd ..                                                                                                                      </span><br><span class="line">rbash: cd: 受限</span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[~/桌面/shellcode]</span><br><span class="line">└─$ python -c &#x27;import os; os.system(&quot;/bin/bash&quot;)&#x27;                                                                              </span><br><span class="line">┌──(pwn㉿kali)-[~/桌面/shellcode]</span><br><span class="line">└─$ cd ..                                                                                                                      </span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[~/桌面]</span><br><span class="line">└─$         </span><br></pre></td></tr></table></figure>
+
+<h2 id="chroot-rbasn"><a href="#chroot-rbasn" class="headerlink" title="chroot+rbasn"></a>chroot+rbasn</h2><p><strong>要点</strong></p>
+<ul>
+<li><strong><code>chroot</code></strong> <strong>创建隔离的文件系统</strong></li>
+</ul>
+<p><code>chroot</code> 将用户的根目录限制在一个指定的文件系统，使得用户无法访问系统的其余部分。即使用户尝试访问 <code>/</code>，实际上访问的也是 <code>chroot jail</code> 内部的文件</p>
+<ul>
+<li><strong><code>rbash</code></strong> <strong>限制用户操作</strong></li>
+</ul>
+<p><code>rbash</code>（受限 Bash）进一步限制用户对文件系统和系统命令的操作，禁止更改目录、修改环境变量、使用重定向等。将用户的 shell 设置为 <code>rbash</code>，可以防止用户在 <code>chroot jail</code> 中逃脱出来或执行非预期的操作。</p>
+<h3 id="防范措施（反逃逸"><a href="#防范措施（反逃逸" class="headerlink" title="防范措施（反逃逸)"></a>防范措施（反逃逸)</h3><p>基本上就是和前面的“逃逸”反着来，能使用python就禁用python，能使用编辑器就禁用编辑器</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>pwn.college - Sandboxing - chroot</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://atum.li/2017/04/25/linuxsandbox/#chroot-jail" >https://atum.li/2017/04/25/linuxsandbox/#chroot-jail<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.baeldung.com/linux/sandboxing-process" >https://www.baeldung.com/linux/sandboxing-process<i class="fas fa-external-link-alt"></i></a></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                linux沙箱之文件系统隔离
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/09/21/linux沙箱之文件系统隔离/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">arch3rn4r</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-09-21 14:33</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2024/09/21/shell%E7%9A%84%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4%E6%9C%BA%E5%88%B6/"
+                                   title="shell的历史命令机制"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">shell的历史命令机制</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/09/18/python%E9%80%86%E5%90%91/"
+                                   title="python逆向"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">python逆向</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+    <div class="comments-container border-box">
+        <div id="comments-anchor" class="comment-area-title border-box">
+            <i class="fas fa-comments"></i>&nbsp;评论
+        </div>
+        <div class="comment-plugin-fail border-box">
+    <span class="fail-tip">评论插件加载失败</span>
+    <button class="reload keep-button">点击重新加载</button>
+</div>
+<div class="comment-plugin-loading flex-center border-box">
+    <i class="loading-icon fa-solid fa-spinner fa-spin"></i>
+    <span class="load-tip">正在加载评论插件</span>
+</div>
+<script data-pjax>
+  window.KeepCommentPlugin = {}
+  window.KeepCommentPlugin.hideLoading = () => {
+    const cplDom = document.querySelector('.comments-container .comment-plugin-loading')
+    cplDom.style.display = 'none'
+  }
+  window.KeepCommentPlugin.loadFailHandle = () => {
+    window.KeepCommentPlugin.hideLoading()
+    const cpfDom = document.querySelector('.comments-container .comment-plugin-fail')
+    cpfDom.style.display = 'flex'
+    cpfDom.querySelector('.reload').addEventListener('click', () => {
+      window.location.reload()
+    })
+  }
+</script>
+
+        
+            
+
+    <div class="giscus-comments-container">
+        <div class="giscus" id="giscus"></div>
+        <script 
+                onerror="window.KeepCommentPlugin.loadFailHandle()"
+        >
+          if (!window.KeepCommentPlugin?.getGiscusTheme) {
+            window.KeepCommentPlugin.getGiscusTheme = () => {
+              return document.documentElement.classList.contains('dark-mode') ? 'dark_dimmed' : 'light_tritanopia'
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.changeGiscusTheme) {
+            window.KeepCommentPlugin.changeGiscusTheme = () => {
+              const iframe = document.querySelector('iframe.giscus-frame')
+              iframe && iframe.contentWindow.postMessage({
+                giscus: {
+                  setConfig: {
+                    theme: window.KeepCommentPlugin.getGiscusTheme()
+                  }
+                }
+              }, 'https://giscus.app')
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.initGiscus) {
+            window.KeepCommentPlugin.initGiscus = () => {
+              const script = document.createElement('script')
+              script.async = true
+              script.src = 'https://giscus.app/client.js'
+              script.setAttribute('data-repo', 'arch3rn4r/arch3rn4r.github.io')
+              script.setAttribute('data-repo-id', 'R_kgDOLnMFhw')
+              script.setAttribute('data-category', 'Announcements')
+              script.setAttribute('data-category-id', 'DIC_kwDOLnMFh84Cik-D')
+              script.setAttribute('data-reactions-enabled', '0')
+              script.setAttribute('data-lang', 'zh-CN')
+              script.setAttribute('data-mapping', 'pathname')
+              script.setAttribute('data-strict', '0')
+              script.setAttribute('data-emit-metadata', '0')
+              script.setAttribute('data-input-position', 'top')
+              script.setAttribute('crossorigin', 'anonymous')
+              script.setAttribute('loading', 'lazy')
+              script.setAttribute('data-theme', window.KeepCommentPlugin.getGiscusTheme())
+              document.querySelector('.giscus-comments-container').appendChild(script)
+              script.onerror = () => {
+                window.KeepCommentPlugin.loadFailHandle()
+              }
+              script.onload = () => {
+                window.KeepCommentPlugin.hideLoading()
+              }
+              const toggleThemeBtn = document.querySelector('.tool-toggle-theme-mode')
+              toggleThemeBtn && toggleThemeBtn.addEventListener('click', () => {
+                window.KeepCommentPlugin.changeGiscusTheme()
+              })
+            }
+          }
+
+          if ('false' === "true") {
+            setTimeout(() => {
+              window.KeepCommentPlugin.initGiscus()
+            }, 1000)
+          } else {
+            window.addEventListener("DOMContentLoaded", window.KeepCommentPlugin.initGiscus)
+          }
+        </script>
+    </div>
+
+
+        
+    </div>
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc left-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#chroot%E4%BB%8B%E7%BB%8D"><span class="nav-text">chroot介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#chroot%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">chroot使用及注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#chroot-%E7%9B%AE%E5%BD%95%E6%9C%80%E5%88%9D%E7%9A%84%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="nav-text">chroot 目录最初的状态：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jailkit%E2%80%94%E2%80%94%E5%B0%86%E6%94%BB%E5%87%BB%E8%80%85%E5%85%B3%E8%BF%9Bchroot-jail"><span class="nav-text">jailkit——将攻击者关进chroot jail</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-text">使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E7%94%A8%E6%B3%95"><span class="nav-text">扩展用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8"><span class="nav-text">逃逸</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chroot%E7%BC%BA%E7%82%B9"><span class="nav-text">chroot缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#restricted-bash"><span class="nav-text">restricted bash</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8-1"><span class="nav-text">逃逸</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chroot-rbasn"><span class="nav-text">chroot+rbasn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E8%8C%83%E6%8E%AA%E6%96%BD%EF%BC%88%E5%8F%8D%E9%80%83%E9%80%B8"><span class="nav-text">防范措施（反逃逸)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">arch3rn4r</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">78.1k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools left-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+            <li class="tools-item go-to-comments-tablet flex-center">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#chroot%E4%BB%8B%E7%BB%8D"><span class="nav-text">chroot介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#chroot%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">chroot使用及注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#chroot-%E7%9B%AE%E5%BD%95%E6%9C%80%E5%88%9D%E7%9A%84%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="nav-text">chroot 目录最初的状态：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jailkit%E2%80%94%E2%80%94%E5%B0%86%E6%94%BB%E5%87%BB%E8%80%85%E5%85%B3%E8%BF%9Bchroot-jail"><span class="nav-text">jailkit——将攻击者关进chroot jail</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-text">使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E7%94%A8%E6%B3%95"><span class="nav-text">扩展用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8"><span class="nav-text">逃逸</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chroot%E7%BC%BA%E7%82%B9"><span class="nav-text">chroot缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#restricted-bash"><span class="nav-text">restricted bash</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8-1"><span class="nav-text">逃逸</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chroot-rbasn"><span class="nav-text">chroot+rbasn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E8%8C%83%E6%8E%AA%E6%96%BD%EF%BC%88%E5%8F%8D%E9%80%83%E9%80%B8"><span class="nav-text">防范措施（反逃逸)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/lazyload.min.js"></script>
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

